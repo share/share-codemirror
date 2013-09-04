@@ -29,6 +29,16 @@ describe('shareCodeMirror', function() {
     cm.setValue('Hello');
     assert.equal('Hello', ctx.getText());
   });
+
+  it('propagates big new text from cm to share', function() {
+    var text = "aaaa\nbbbb\ncccc\ndddd";
+    var ctx = new Ctx('');
+    var cm = window.CodeMirror.fromTextArea(document.getElementById('editor'));
+    shareCodeMirror(cm, ctx);
+
+    cm.setValue(text);
+    assert.equal(text, ctx.getText());
+  });
 });
 
 describe('Stub context', function() {
