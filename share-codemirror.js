@@ -73,7 +73,7 @@
 
     function check() {
       setTimeout(function () {
-        var cmText = cm.getValue('\n');
+        var cmText = cm.getValue();
         var otText = ctx.getText();
 
         if (cmText != otText) {

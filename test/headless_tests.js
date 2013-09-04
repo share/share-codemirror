@@ -6,12 +6,12 @@ navigator = {};
 // Add some missing stuff in jsdom that CodeMirror wants
 jsdom.dom.level3.html.HTMLElement.prototype.getBoundingClientRect = function(){ 
   return {
-	  bottom: 100,
-	  height: 100,
-	  left:   100,
-	  right:  100,
-	  top:    100,
-	  width:  100
+    bottom: 100,
+    height: 100,
+    left:   100,
+    right:  100,
+    top:    100,
+    width:  100
   };
 };
 
@@ -20,11 +20,33 @@ var share = require('share');
 var shareCodeMirror = require('..');
 var assert = require('assert');
 
-describe('shareCodeMirror', function() {
+function newCm(ctx) {
+  var cm = window.CodeMirror.fromTextArea(document.getElementById('editor'));
+  shareCodeMirror(cm, ctx);
+  return cm;
+}
+
+describe('CodeMirror creation', function() {
+  it('sets context text in editor', function() {
+    var ctx = new Ctx('hi');
+    var cm = newCm(ctx);
+
+    assert.equal('hi', cm.getValue());
+  });
+});
+
+describe('CodeMirror edits', function() {
+  xit('inserts a line', function() {
+    var ctx = new Ctx('hi');
+    var cm = newCm(ctx);
+
+    cm.setLine(0, 'hello');
+    assert.equal('hello', cm.getValue());
+  });
+
   it('propagates small new text from cm to share', function() {
     var ctx = new Ctx('');
-    var cm = window.CodeMirror.fromTextArea(document.getElementById('editor'));
-    shareCodeMirror(cm, ctx);
+    var cm = newCm(ctx);
 
     cm.setValue('Hello');
     assert.equal('Hello', ctx.getText());
@@ -33,8 +55,7 @@ describe('shareCodeMirror', function() {
   it('propagates big new text from cm to share', function() {
     var text = "aaaa\nbbbb\ncccc\ndddd";
     var ctx = new Ctx('');
-    var cm = window.CodeMirror.fromTextArea(document.getElementById('editor'));
-    shareCodeMirror(cm, ctx);
+    var cm = newCm(ctx);
 
     cm.setValue(text);
     assert.equal(text, ctx.getText());
