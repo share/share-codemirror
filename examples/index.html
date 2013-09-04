@@ -20,12 +20,11 @@ var s = new BCSocket(null, {reconnect: true});
 var sjs = new window.sharejs.Connection(s);
 var doc = sjs.get('users', 'sephx');
 
-console.log(doc);
 doc.subscribe();
 doc.whenReady(function () {
   if (!doc.type) doc.create('text');
   if (doc.type && doc.type.name === 'text') {
-    shareCodeMirror(cm, doc.createContext());
+    doc.attachCodeMirror(cm);
   }
 });
 

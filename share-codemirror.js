@@ -88,16 +88,21 @@
   }
 
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    // Node.js
     module.exports = shareCodeMirror;
     module.exports.scriptsDir = __dirname;
   } else {
     if (typeof define === 'function' && define.amd) {
+      // Require.js & co
       define([], function () {
         return shareCodeMirror;
       });
     } else {
-      // TODO: stick it on window.sharejs or window.CodeMirror - or both? Or none?
-      window.shareCodeMirror = shareCodeMirror;
+      // Browser, no AMD
+      window.sharejs.Doc.prototype.attachCodeMirror = function(cm, ctx) {
+        if(!ctx) ctx = this.createContext();
+        shareCodeMirror(cm, ctx);
+      };
     }
   }
 })();

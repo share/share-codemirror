@@ -9,7 +9,7 @@ var cm = CodeMirror.fromTextArea(elem);
 var ctx = shareDoc.createContext();
 
 // Hook them up
-shareCodeMirror(cm, ctx);
+doc.attachCodeMirror(cm);
 ```
 
 ## Install with Bower
