@@ -34,40 +34,38 @@
       check();
     });
 
-    // Convert a CodeMirror delta into an op understood by share.js
-    function applyToShareJS(cm, delta) {
-      // CodeMirror deltas give a text replacement.
+    // Convert a CodeMirror change into an op understood by share.js
+    function applyToShareJS(cm, change) {
+      // CodeMirror changes give a text replacement.
       // I tuned this operation a little bit, for speed.
       var startPos = 0;  // Get character position from # of chars in each line.
       var i = 0;         // i goes through all lines.
 
-      while (i < delta.from.line) {
+      while (i < change.from.line) {
         startPos += cm.lineInfo(i).text.length + 1;   // Add 1 for '\n'
         i++;
       }
 
-      startPos += delta.from.ch;
+      startPos += change.from.ch;
 
-      if (delta.to.line == delta.from.line && delta.to.ch == delta.from.ch) {
-        // Then nothing was removed.
-        ctx.insert(startPos, delta.text.join('\n'));
+      if (change.to.line == change.from.line && change.to.ch == change.from.ch) {
+        // nothing was removed.
       } else {
         // delete.removed contains an array of removed lines as strings, so this adds
-        // all the lengths. Later delta.removed.length - 1 is added for the \n-chars
+        // all the lengths. Later change.removed.length - 1 is added for the \n-chars
         // (-1 because the linebreak on the last line won't get deleted)
         var delLen = 0;
-        for (var rm in delta.removed) {
-          delLen += rm.length;
+        for (var rm = 0; rm < change.removed.length; rm++) {
+          delLen += change.removed[rm].length;
         }
-        delLen += delta.removed.length - 1;
-
+        delLen += change.removed.length - 1;
         ctx.remove(startPos, delLen);
-        if (delta.text) {
-          ctx.insert(startPos, delta.text.join('\n'));
-        }
       }
-      if (delta.next) {
-        applyToShareJS(cm, delta.next);
+      if (change.text) {
+        ctx.insert(startPos, change.text.join('\n'));
+      }
+      if (change.next) {
+        applyToShareJS(cm, change.next);
       }
     }
 
@@ -80,6 +78,7 @@
           console.error("Text does not match!");
           console.error("cm: " + cmText);
           console.error("ot: " + otText);
+          return;
           // Replace the editor text with the ctx snapshot.
           cm.setValue(ctx.getText());
         }

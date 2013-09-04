@@ -29,7 +29,7 @@ describe('CodeMirror creation', function() {
 });
 
 describe('CodeMirror edits', function() {
-  xit('inserts a line', function() {
+  it('inserts a line', function() {
     var ctx = new Ctx('hi');
     var cm = newCm(ctx);
 
