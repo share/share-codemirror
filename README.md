@@ -54,8 +54,10 @@ npm install
 npm test
 ```
 
-## TODO
+## Release process
 
-* Write more tests for deletion (which is buggy)
-* Package as bower package
+Modify version in `bower.json`, then run:
 
+```
+npm version `jq -r < bower.json .version`
+```
