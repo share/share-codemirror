@@ -1,6 +1,7 @@
 ## [Git master](https://github.com/share/share-codemirror/compare/v0.0.2...master) (Not released)
 
 * Added code coverage
+* Wrote more tests
 
 ## 0.0.2 (2013-09-04)
 
