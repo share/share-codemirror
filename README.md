@@ -6,11 +6,10 @@ CodeMirror bindings for ShareJS >= 0.7.x.
 
 ```javascript
 var cm = CodeMirror.fromTextArea(elem);
-var ctx = shareDoc.createContext();
-
-// Hook them up
-doc.attachCodeMirror(cm);
+shareDoc.attachCodeMirror(cm);
 ```
+
+That's it. You now have 2-way sync between your ShareJS and CodeMirror. 
 
 ## Install with Bower
 
@@ -24,7 +23,8 @@ bower install share-codemirror
 npm install share-codemirror
 ```
 
-And mount as a static resource
+On Node.js you can mount the `scriptsDir` (where `share-codemirror.js` lives) as a static resource 
+in your web server:
 
 ```javascript
 var shareCodeMirror = require('share-codemirror');
@@ -46,6 +46,9 @@ node examples/server.js
 # in a couple of browsers...
 open http://localhost:7007
 ```
+
+Try clicking the infinite monkeys button. Do it in both browsers.
+Wait for poetry to appear.
 
 ## Run tests
 
