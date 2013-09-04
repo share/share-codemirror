@@ -4,15 +4,8 @@ document = jsdom.jsdom('<html><body><textarea id="editor"></textarea></body></ht
 window = document.parentWindow;
 navigator = {};
 // Add some missing stuff in jsdom that CodeMirror wants
-jsdom.dom.level3.html.HTMLElement.prototype.getBoundingClientRect = function(){ 
-  return {
-    bottom: 100,
-    height: 100,
-    left:   100,
-    right:  100,
-    top:    100,
-    width:  100
-  };
+jsdom.dom.level3.html.HTMLElement.prototype.getBoundingClientRect = function() { 
+  return {};
 };
 
 var codemirror = require('codemirror');
