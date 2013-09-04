@@ -1,7 +1,6 @@
 var Duplex = require('stream').Duplex;
 var browserChannel = require('browserchannel').server;
 var connect = require('connect');
-var argv = require('optimist').argv;
 var livedb = require('livedb');
 var livedbMongo = require('livedb-mongo');
 var sharejs = require('share');
@@ -23,7 +22,6 @@ var share = sharejs.server.createClient({backend: backend});
 webserver.use(browserChannel({webserver: webserver}, function (client) {
   var stream = new Duplex({objectMode: true});
   stream._write = function (chunk, encoding, callback) {
-    console.log('s->c ', chunk);
     if (client.state !== 'closed') {
       client.send(chunk);
     }
@@ -34,7 +32,6 @@ webserver.use(browserChannel({webserver: webserver}, function (client) {
   stream.headers = client.headers;
   stream.remoteAddress = stream.address;
   client.on('message', function (data) {
-    console.log('c->s ', data);
     stream.push(data);
   });
   stream.on('error', function (msg) {
@@ -48,6 +45,5 @@ webserver.use(browserChannel({webserver: webserver}, function (client) {
   return share.listen(stream);
 }));
 
-webserver.use('/doc', share.rest());
 webserver.listen(7007);
 console.log("Listening on http://localhost:7007/");
