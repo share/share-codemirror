@@ -5,10 +5,11 @@ var argv = require('optimist').argv;
 var livedb = require('livedb');
 var livedbMongo = require('livedb-mongo');
 var sharejs = require('share');
+var shareCodeMirror = require('..');
 
 var webserver = connect(
   connect["static"](__dirname),
-  connect["static"](__dirname + '/..'),
+  connect["static"](shareCodeMirror.scriptsDir),
   connect["static"](__dirname + '/../node_modules/codemirror/lib'),
   connect["static"](sharejs.scriptsDir)
 );

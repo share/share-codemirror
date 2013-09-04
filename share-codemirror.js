@@ -89,6 +89,7 @@
 
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     module.exports = shareCodeMirror;
+    module.exports.scriptsDir = __dirname;
   } else {
     if (typeof define === 'function' && define.amd) {
       define([], function () {

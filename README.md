@@ -12,7 +12,33 @@ var ctx = shareDoc.createContext();
 shareCodeMirror(cm, ctx);
 ```
 
-## Example
+## Install with Bower
+
+```
+bower install share-codemirror
+```
+
+## Install with NPM
+
+```
+npm install share-codemirror
+```
+
+And mount as a static resource
+
+```javascript
+var shareCodeMirror = require('share-codemirror');
+// This example uses express.
+app.use(express.static(shareCodeMirror.scriptsDir));
+```
+
+In the HTML:
+
+```html
+<script src="/share-codemirror.js"></script>
+```
+
+## Try it out
 
 ```
 npm install

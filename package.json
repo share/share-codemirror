@@ -1,6 +1,6 @@
 {
   "name": "share-codemirror",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "CodeMirror bindings for ShareJS",
   "main": "share-codemirror.js",
   "scripts": {
