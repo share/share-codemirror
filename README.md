@@ -56,7 +56,11 @@ npm test
 
 ## Release process
 
-Modify version in `bower.json`, then run:
+* Modify version in `bower.json` (not in `package.json`)
+* Update `History.md`
+* Commit
+
+Then run:
 
 ```
 npm version `jq -r < bower.json .version`
