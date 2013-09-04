@@ -78,7 +78,6 @@
           console.error("Text does not match!");
           console.error("cm: " + cmText);
           console.error("ot: " + otText);
-          return;
           // Replace the editor text with the ctx snapshot.
           cm.setValue(ctx.getText());
         }
