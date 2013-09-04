@@ -28,6 +28,7 @@
     "livedb": "~0.2.1",
     "livedb-mongo": "~0.2.2",
     "mocha": "~1.12.1",
-    "jsdom": "~0.8.4"
+    "jsdom": "~0.8.4",
+    "istanbul": "~0.1.43"
   }
 }

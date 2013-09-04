@@ -37,6 +37,14 @@ describe('CodeMirror edits', function() {
     assert.equal('hello', cm.getValue());
   });
 
+  it('replaces a couple of lines', function() {
+    var ctx = new Ctx('three\nblind\nmice\nsee\nhow\nthey\nrun\n');
+    var cm = newCm(ctx);
+
+    cm.replaceRange('evil\nrats\n', {line: 1, ch: 0}, {line: 3, ch: 0});
+    assert.equal('three\nevil\nrats\nsee\nhow\nthey\nrun\n', cm.getValue());
+  });
+
   it('propagates small new text from cm to share', function() {
     var ctx = new Ctx('');
     var cm = newCm(ctx);

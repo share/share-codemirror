@@ -57,6 +57,13 @@ npm install
 npm test
 ```
 
+With test coverage:
+
+```
+node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -u exports
+open coverage/lcov-report/index.html
+```
+
 ## Release process
 
 * Modify version in `bower.json` (not in `package.json`)
