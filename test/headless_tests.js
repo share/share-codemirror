@@ -21,22 +21,68 @@ var shareCodeMirror = require('..');
 var assert = require('assert');
 
 describe('shareCodeMirror', function() {
-  it('removes text in context when delete occurs in CodeMirror', function(cb) {
-    var ctx = {
-      provides: {
-        text: true
-      },
-      getText: function() { return 'a\nb\nc\n'; },
-      remove: function(startPos, delLen) {
-        console.log('remove', startPos, delLen);
-      }
-    };
+  it('propagates small new text from cm to share', function() {
+    var ctx = new Ctx('');
     var cm = window.CodeMirror.fromTextArea(document.getElementById('editor'));
     shareCodeMirror(cm, ctx);
 
-    var from = cm.posFromIndex(2);
-    var to = cm.posFromIndex(2 + 2);
-    cm.replaceRange('', from, to);
-
+    cm.setValue('Hello');
+    assert.equal('Hello', ctx.getText());
   });
 });
+
+describe('Stub context', function() {
+  it('can insert at the beginning', function() {
+    var ctx = new Ctx('abcdefg');
+    ctx.insert(0, '123');
+    assert.equal('123abcdefg', ctx.getText());
+  });
+
+  it('can insert in the middle', function() {
+    var ctx = new Ctx('abcdefg');
+    ctx.insert(2, '123');
+    assert.equal('ab123cdefg', ctx.getText());
+  });
+
+  it('can insert at the end', function() {
+    var ctx = new Ctx('abcdefg');
+    ctx.insert(ctx.getText().length, '123');
+    assert.equal('abcdefg123', ctx.getText());
+  });
+
+  it('can remove from the beginning', function() {
+    var ctx = new Ctx('abcdefg');
+    ctx.remove(0, 2);
+    assert.equal('cdefg', ctx.getText());
+  });
+
+  it('can remove from the middle', function() {
+    var ctx = new Ctx('abcdefg');
+    ctx.remove(2, 3);
+    assert.equal('abfg', ctx.getText());
+  });
+
+  it('can remove from the end', function() {
+    var ctx = new Ctx('abcdefg');
+    ctx.remove(5, 2);
+    assert.equal('abcde', ctx.getText());
+  });
+})
+
+function Ctx(text) {
+  this.provides = { text: true };
+
+  this.getText = function() { return text; };
+
+  this.insert = function(startPos, newText) {
+    var before = text.substring(0, startPos);
+    var after = text.substring(startPos);
+    text = before + newText + after;
+  };
+
+  this.remove = function(startPos, length) {
+    var before = text.substring(0, startPos);
+    var after = text.substring(startPos+length);
+    text = before + after;
+  };
+}
