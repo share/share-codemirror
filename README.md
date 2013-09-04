@@ -64,4 +64,5 @@ Then run:
 
 ```
 npm version `jq -r < bower.json .version`
+git push --tags
 ```
