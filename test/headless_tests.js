@@ -29,12 +29,21 @@ describe('CodeMirror creation', function() {
 });
 
 describe('CodeMirror edits', function() {
-  it('inserts a line', function() {
+  it('adds text', function() {
+    var text = "aaaa\nbbbb\ncccc\ndddd";
+    var ctx = new Ctx('');
+    var cm = newCm(ctx);
+
+    cm.setValue(text);
+    assert.equal(text, ctx.getText());
+  });
+
+  it('replaces a line', function() {
     var ctx = new Ctx('hi');
     var cm = newCm(ctx);
 
     cm.setLine(0, 'hello');
-    assert.equal('hello', cm.getValue());
+    assert.equal('hello', ctx.getText());
   });
 
   it('replaces a couple of lines', function() {
@@ -42,24 +51,36 @@ describe('CodeMirror edits', function() {
     var cm = newCm(ctx);
 
     cm.replaceRange('evil\nrats\n', {line: 1, ch: 0}, {line: 3, ch: 0});
-    assert.equal('three\nevil\nrats\nsee\nhow\nthey\nrun\n', cm.getValue());
+    assert.equal('three\nevil\nrats\nsee\nhow\nthey\nrun\n', ctx.getText());
   });
+});
 
-  it('propagates small new text from cm to share', function() {
-    var ctx = new Ctx('');
-    var cm = newCm(ctx);
-
-    cm.setValue('Hello');
-    assert.equal('Hello', ctx.getText());
-  });
-
-  it('propagates big new text from cm to share', function() {
+describe('ShareJS changes', function() {
+  it('adds text', function() {
     var text = "aaaa\nbbbb\ncccc\ndddd";
-    var ctx = new Ctx('');
+    var ctx = new Ctx('', true);
     var cm = newCm(ctx);
 
-    cm.setValue(text);
-    assert.equal(text, ctx.getText());
+    ctx.insert(0, text);
+    assert.equal(text, cm.getValue());
+  });
+
+  it('replaces a line', function() {
+    var ctx = new Ctx('hi', true);
+    var cm = newCm(ctx);
+
+    ctx.remove(0, 2);
+    ctx.insert(0, 'hello');
+    assert.equal('hello', cm.getValue());
+  });
+
+  it('replaces a couple of lines', function() {
+    var ctx = new Ctx('three\nblind\nmice\nsee\nhow\nthey\nrun\n', true);
+    var cm = newCm(ctx);
+
+    ctx.remove(6, 11);
+    ctx.insert(6, 'evil\nrats\n');
+    assert.equal('three\nevil\nrats\nsee\nhow\nthey\nrun\n', cm.getValue());
   });
 });
 
@@ -101,7 +122,7 @@ describe('Stub context', function() {
   });
 })
 
-function Ctx(text) {
+function Ctx(text, fireEvents) {
   this.provides = { text: true };
 
   this.getText = function() { return text; };
@@ -110,11 +131,13 @@ function Ctx(text) {
     var before = text.substring(0, startPos);
     var after = text.substring(startPos);
     text = before + newText + after;
+    fireEvents && this.onInsert && this.onInsert(startPos, newText);
   };
 
   this.remove = function(startPos, length) {
     var before = text.substring(0, startPos);
     var after = text.substring(startPos+length);
     text = before + after;
+    fireEvents && this.onRemove && this.onRemove(startPos, length);
   };
 }
