@@ -27,6 +27,11 @@
     "browserchannel": "~1.0.7",
     "livedb": "~0.2.1",
     "livedb-mongo": "~0.2.2",
-    "optimist": "~0.6.0"
+    "optimist": "~0.6.0",
+    "mocha": "~1.12.1",
+    "zombie": "~2.0.0-alpha21"
+  },
+  "dependencies": {
+    "jsdom": "~0.8.4"
   }
 }
