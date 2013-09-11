@@ -74,5 +74,9 @@ Then run:
 
 ```
 npm version `jq -r < bower.json .version`
+npm publish
 git push --tags
 ```
+
+There is no `bower publish` - the existance of a git tag is enough.
+
