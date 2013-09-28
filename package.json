@@ -23,12 +23,12 @@
   "devDependencies": {
     "share": "v0.7.0-alpha9",
     "codemirror": "git://github.com/marijnh/CodeMirror.git#master",
-    "connect": "~2.9.0",
-    "browserchannel": "~1.0.7",
-    "livedb": "~0.2.1",
-    "livedb-mongo": "~0.2.2",
-    "mocha": "~1.13.0",
-    "jsdom": "~0.8.4",
-    "istanbul": "~0.1.43"
+    "connect": "~2.11.0",
+    "browserchannel": "~1.0.8",
+    "livedb": "~0.2.6",
+    "livedb-mongo": "~0.2.5",
+    "mocha": "~1.14.0",
+    "jsdom": "~0.8.8",
+    "istanbul": "~0.1.44"
   }
 }

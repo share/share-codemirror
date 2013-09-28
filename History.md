@@ -1,7 +1,8 @@
-## [Git master](https://github.com/share/share-codemirror/compare/v0.0.2...master) (Not released)
+## [0.0.3](https://github.com/share/share-codemirror/compare/v0.0.2...v0.0.3) (28 Sept 2013)
 
-* Added code coverage
-* Wrote more tests
+* Use `ctx.get()` instead of deprecated `ctx.getText()`.
+* Added code coverage.
+* Wrote more tests.
 
 ## 0.0.2 (2013-09-04)
 
