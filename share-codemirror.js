@@ -5,7 +5,7 @@
     if (!ctx.provides.text) throw new Error('Cannot attach to non-text document');
 
     var suppress = false;
-    cm.setValue(ctx.getText());
+    cm.setValue(ctx.get());
     check();
 
     // *** remote -> local changes
@@ -72,14 +72,14 @@
     function check() {
       setTimeout(function () {
         var cmText = cm.getValue();
-        var otText = ctx.getText();
+        var otText = ctx.get();
 
         if (cmText != otText) {
           console.error("Text does not match!");
           console.error("cm: " + cmText);
           console.error("ot: " + otText);
           // Replace the editor text with the ctx snapshot.
-          cm.setValue(ctx.getText());
+          cm.setValue(ctx.get());
         }
       }, 0);
     }

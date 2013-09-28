@@ -35,7 +35,7 @@ describe('CodeMirror edits', function() {
     var cm = newCm(ctx);
 
     cm.setValue(text);
-    assert.equal(text, ctx.getText());
+    assert.equal(text, ctx.get());
   });
 
   it('replaces a line', function() {
@@ -43,7 +43,7 @@ describe('CodeMirror edits', function() {
     var cm = newCm(ctx);
 
     cm.setLine(0, 'hello');
-    assert.equal('hello', ctx.getText());
+    assert.equal('hello', ctx.get());
   });
 
   it('replaces a couple of lines', function() {
@@ -51,7 +51,7 @@ describe('CodeMirror edits', function() {
     var cm = newCm(ctx);
 
     cm.replaceRange('evil\nrats\n', {line: 1, ch: 0}, {line: 3, ch: 0});
-    assert.equal('three\nevil\nrats\nsee\nhow\nthey\nrun\n', ctx.getText());
+    assert.equal('three\nevil\nrats\nsee\nhow\nthey\nrun\n', ctx.get());
   });
 });
 
@@ -88,44 +88,44 @@ describe('Stub context', function() {
   it('can insert at the beginning', function() {
     var ctx = new Ctx('abcdefg');
     ctx.insert(0, '123');
-    assert.equal('123abcdefg', ctx.getText());
+    assert.equal('123abcdefg', ctx.get());
   });
 
   it('can insert in the middle', function() {
     var ctx = new Ctx('abcdefg');
     ctx.insert(2, '123');
-    assert.equal('ab123cdefg', ctx.getText());
+    assert.equal('ab123cdefg', ctx.get());
   });
 
   it('can insert at the end', function() {
     var ctx = new Ctx('abcdefg');
-    ctx.insert(ctx.getText().length, '123');
-    assert.equal('abcdefg123', ctx.getText());
+    ctx.insert(ctx.get().length, '123');
+    assert.equal('abcdefg123', ctx.get());
   });
 
   it('can remove from the beginning', function() {
     var ctx = new Ctx('abcdefg');
     ctx.remove(0, 2);
-    assert.equal('cdefg', ctx.getText());
+    assert.equal('cdefg', ctx.get());
   });
 
   it('can remove from the middle', function() {
     var ctx = new Ctx('abcdefg');
     ctx.remove(2, 3);
-    assert.equal('abfg', ctx.getText());
+    assert.equal('abfg', ctx.get());
   });
 
   it('can remove from the end', function() {
     var ctx = new Ctx('abcdefg');
     ctx.remove(5, 2);
-    assert.equal('abcde', ctx.getText());
+    assert.equal('abcde', ctx.get());
   });
 })
 
 function Ctx(text, fireEvents) {
   this.provides = { text: true };
 
-  this.getText = function() { return text; };
+  this.get = function() { return text; };
 
   this.insert = function(startPos, newText) {
     var before = text.substring(0, startPos);

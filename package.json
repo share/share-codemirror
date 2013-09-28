@@ -22,13 +22,13 @@
   },
   "devDependencies": {
     "share": "git://github.com/share/ShareJS.git#master",
-    "codemirror": "~3.16.0",
-    "connect": "~2.8.8",
+    "codemirror": "~3.18.0",
+    "connect": "~2.9.0",
     "browserchannel": "~1.0.7",
-    "livedb": "~0.2.1",
-    "livedb-mongo": "~0.2.2",
-    "mocha": "~1.12.1",
-    "jsdom": "~0.8.4",
-    "istanbul": "~0.1.43"
+    "livedb": "~0.2.2",
+    "livedb-mongo": "~0.2.4",
+    "mocha": "~1.13.0",
+    "jsdom": "~0.8.6",
+    "istanbul": "~0.1.44"
   }
 }
