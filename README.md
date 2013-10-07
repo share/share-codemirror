@@ -1,5 +1,4 @@
-# Share-CodeMirror [![Build Status](https://secure.travis-ci.org/share/share-codemirror.png)](http://travis-ci.org/share/share-codemirror) [![Dependencies](https://david-dm.org/share/share-codemirror.png)](https://david-dm.org/share/share-codemirror)
-
+# Share-CodeMirror [![Build Status](https://secure.travis-ci.org/share/share-codemirror.png)](http://travis-ci.org/share/share-codemirror) [![Dependencies](https://david-dm.org/share/share-codemirror.png)](https://david-dm.org/share/share-codemirror) [![devDependency Status](https://david-dm.org/share/share-codemirror/dev-status.png)](https://david-dm.org/share/share-codemirror#info=devDependencies)
 CodeMirror bindings for ShareJS >= 0.7.x.
 
 ## Usage
