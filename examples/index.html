@@ -5,7 +5,9 @@
 <script src="/codemirror.js"></script>
 <script src="/channel/bcsocket.js"></script>
 <script src="/share.uncompressed.js"></script>
+<script src="/dispatch-socket.js"></script>
 <script src="/share-codemirror.js"></script>
+<script src="/share-codemirror-cursor.js"></script>
 </head>
 <body>
 <textarea id="pad">Connecting...</textarea>
@@ -16,8 +18,12 @@ var cm = CodeMirror.fromTextArea(elem, {
   mode: "text/plain"
 });
 
-var s = new BCSocket(null, {reconnect: true});
-var sjs = new window.sharejs.Connection(s);
+var bcs = new BCSocket(null, {reconnect: true});
+var ds = new DispatchSocket(bcs);
+shareCodeMirrorCursor(cm, ds); // TODO: cm.attachSharedCursors(ds);
+
+var sjs = new window.sharejs.Connection(ds);
+
 var doc = sjs.get('users', 'sephx');
 
 doc.subscribe();

@@ -19,7 +19,12 @@ var backend = livedb.client(livedbMongo('localhost:27017/test?auto_reconnect', {
 
 var share = sharejs.server.createClient({backend: backend});
 
+var clientsById = {};
+
 webserver.use(browserChannel({webserver: webserver}, function (client) {
+  clientsById[client.id] = client;
+  client.send({_type: 'connectionId', connectionId: client.id});
+
   var stream = new Duplex({objectMode: true});
   stream._write = function (chunk, encoding, callback) {
     if (client.state !== 'closed') {
@@ -32,15 +37,34 @@ webserver.use(browserChannel({webserver: webserver}, function (client) {
   stream.headers = client.headers;
   stream.remoteAddress = stream.address;
   client.on('message', function (data) {
-    stream.push(data);
+    if(data._type) {
+      data.connectionId = client.id;
+      for(var clientId in clientsById) {
+        var c = clientsById[clientId];
+        c.send(data);
+      }
+    } else {
+      
+      if(data.a == 'sub') {
+        var docId = data.d;
+        var collectionName = data.c;
+        // Client client.id is subbing to docId inside collectionName
+        console.log('SUB', data);
+      }
+      
+      stream.push(data);
+    }
   });
   stream.on('error', function (msg) {
+    console.log('ERROR', msg, client.id);
     client.stop();
   });
   client.on('close', function (reason) {
+    console.log('CLOSE', reason, client.id);
     stream.emit('close');
     stream.emit('end');
     stream.end();
+    delete clientsById[client.id];
   });
   return share.listen(stream);
 }));
