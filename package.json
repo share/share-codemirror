@@ -21,7 +21,7 @@
     "url": "https://github.com/share/share-codemirror/issues"
   },
   "devDependencies": {
-    "share": "git://github.com/share/ShareJS.git#master",
+    "share": "v0.7.0-alpha9",
     "codemirror": "git://github.com/marijnh/CodeMirror.git#master",
     "connect": "~2.9.0",
     "browserchannel": "~1.0.7",
