@@ -4,8 +4,8 @@
   "description": "CodeMirror bindings for ShareJS",
   "main": "share-codemirror.js",
   "scripts": {
-    "test": "node_modules/.bin/mocha",
-    "postinstall": "cd node_modules/share && npm install"
+    "pretest": "cd node_modules/share && npm install",
+    "test": "node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",

@@ -1,3 +1,7 @@
+## [0.0.4](https://github.com/share/share-codemirror/compare/v0.0.3...v0.0.4) (3 Nov 2013)
+
+* Fix npm install problem. [#2](https://github.com/share/share-codemirror/issues/2).
+
 ## [0.0.3](https://github.com/share/share-codemirror/compare/v0.0.2...v0.0.3) (28 Sept 2013)
 
 * Use `ctx.get()` instead of deprecated `ctx.getText()`.
