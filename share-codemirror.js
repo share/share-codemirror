@@ -5,7 +5,8 @@
     if (!ctx.provides.text) throw new Error('Cannot attach to non-text document');
 
     var suppress = false;
-    cm.setValue(ctx.get());
+    var text = ctx.get() || ''; // Due to a bug in share - get() returns undefined for empty docs.
+    cm.setValue(text);
     check();
 
     // *** remote -> local changes
@@ -72,14 +73,14 @@
     function check() {
       setTimeout(function () {
         var cmText = cm.getValue();
-        var otText = ctx.get();
+        var otText = ctx.get() || '';
 
         if (cmText != otText) {
           console.error("Text does not match!");
           console.error("cm: " + cmText);
           console.error("ot: " + otText);
           // Replace the editor text with the ctx snapshot.
-          cm.setValue(ctx.get());
+          cm.setValue(ctx.get() || '');
         }
       }, 0);
     }

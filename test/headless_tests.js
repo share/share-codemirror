@@ -57,12 +57,21 @@ describe('CodeMirror edits', function() {
 
 describe('ShareJS changes', function() {
   it('adds text', function() {
-    var text = "aaaa\nbbbb\ncccc\ndddd";
     var ctx = new Ctx('', true);
     var cm = newCm(ctx);
 
+    var text = "aaaa\nbbbb\ncccc\ndddd";
     ctx.insert(0, text);
     assert.equal(text, cm.getValue());
+  });
+
+  it('handles undefined text', function() {
+    var ctx = new Ctx('', true);
+    var cm = newCm(ctx);
+
+    var text = undefined;
+    ctx.insert(0, '');
+    assert.equal('', cm.getValue());
   });
 
   it('replaces a line', function() {
@@ -125,7 +134,10 @@ describe('Stub context', function() {
 function Ctx(text, fireEvents) {
   this.provides = { text: true };
 
-  this.get = function() { return text; };
+  this.get = function() {
+    // Replicate a sharejs bug where empty docs return undefined.
+    return text == '' ? undefined : text;
+  };
 
   this.insert = function(startPos, newText) {
     var before = text.substring(0, startPos);
