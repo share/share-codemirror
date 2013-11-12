@@ -21,7 +21,6 @@ var share = sharejs.server.createClient({backend: backend});
 
 webserver.use(browserChannel({webserver: webserver}, function (client) {
   var stream = new Duplex({objectMode: true});
-  console.log('CLIENT');
   stream._write = function (chunk, encoding, callback) {
     if (client.state !== 'closed') {
       client.send(chunk);

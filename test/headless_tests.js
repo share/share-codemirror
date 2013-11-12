@@ -30,12 +30,23 @@ describe('CodeMirror creation', function() {
 
 describe('CodeMirror edits', function() {
   it('adds text', function() {
-    var text = "aaaa\nbbbb\ncccc\ndddd";
     var ctx = new Ctx('');
     var cm = newCm(ctx);
 
+    var text = "aaaa\nbbbb\ncccc\ndddd";
     cm.setValue(text);
     assert.equal(text, ctx.get());
+  });
+
+  it('adds empty text', function() {
+    var ctx = new Ctx('');
+    var cm = newCm(ctx);
+
+    cm.setValue('');
+    assert.equal('', ctx.get() || '');
+
+    cm.setValue('a');
+    assert.equal('a', ctx.get() || '');
   });
 
   it('replaces a line', function() {
@@ -65,13 +76,15 @@ describe('ShareJS changes', function() {
     assert.equal(text, cm.getValue());
   });
 
-  it('handles undefined text', function() {
+  it('can edit a doc that has been empty', function() {
     var ctx = new Ctx('', true);
     var cm = newCm(ctx);
 
-    var text = undefined;
     ctx.insert(0, '');
     assert.equal('', cm.getValue());
+
+    ctx.insert(0, 'a');
+    assert.equal('a', cm.getValue());
   });
 
   it('replaces a line', function() {
