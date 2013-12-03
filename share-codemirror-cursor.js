@@ -23,7 +23,6 @@
 
     ds.on_cursor = function (msg) {
       if(msg.connectionId == connectionId) return;
-      console.log(msg);
       var cursor = cursorsByConnectionId[connectionId];
       if(cursor === undefined) {
         cursor = createCursorWidget(cm);
@@ -37,8 +36,9 @@
     var square = document.createElement('div');
     square.style.width = cm.defaultCharWidth() + 'px';
     square.style.height = cm.defaultTextHeight() + 'px';
-    square.style.background = '#BBBBFF';
-
+    square.style.top = '-' + cm.defaultTextHeight() + 'px';
+    square.style.position = 'relative';
+    square.style.background = '#FF00FF';
     var cursor = document.createElement('div');
     cursor.appendChild(square);
     return cursor;
