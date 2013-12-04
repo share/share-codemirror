@@ -15,19 +15,20 @@
     });
 
     var cursorsByConnectionId = {};
-    var connectionId;
+    var myConnectionId;
 
     ds.on_connectionId = function (msg) {
-      connectionId = msg.connectionId;
+      myConnectionId = msg.connectionId;
     };
 
     ds.on_cursor = function (msg) {
-      if(msg.connectionId == connectionId) return;
-      var cursor = cursorsByConnectionId[connectionId];
+      if(msg.connectionId === myConnectionId) return;
+      var cursor = cursorsByConnectionId[msg.connectionId];
       if(cursor === undefined) {
         cursor = createCursorWidget(cm);
-        cursorsByConnectionId[connectionId] = cursor;
+        cursorsByConnectionId[msg.connectionId] = cursor;
       }
+      console.log(cursorsByConnectionId);
       cm.addWidget(msg.from, cursor);
     };
   }
