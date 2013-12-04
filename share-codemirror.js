@@ -1,6 +1,10 @@
 (function () {
   'use strict';
 
+  /**
+   * @param cm - CodeMirror instance
+   * @param ctx - Share context
+   */
   function shareCodeMirror(cm, ctx) {
     if (!ctx.provides.text) throw new Error('Cannot attach to non-text document');
 
@@ -94,14 +98,14 @@
     module.exports.scriptsDir = __dirname;
   } else {
     if (typeof define === 'function' && define.amd) {
-      // Require.js & co
+      // AMD
       define([], function () {
         return shareCodeMirror;
       });
     } else {
       // Browser, no AMD
-      window.sharejs.Doc.prototype.attachCodeMirror = function(cm, ctx) {
-        if(!ctx) ctx = this.createContext();
+      window.sharejs.Doc.prototype.attachCodeMirror = function (cm, ctx) {
+        if (!ctx) ctx = this.createContext();
         shareCodeMirror(cm, ctx);
       };
     }
