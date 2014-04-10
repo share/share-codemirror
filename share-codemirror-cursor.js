@@ -7,7 +7,7 @@
       var endCur = editor.getCursor('end');
 
       var from = startCur;
-      var to = {line: endCur.line, ch: endCur.ch+1};
+      var to = {line: endCur.line, ch: endCur.ch};
 
       ctx.setSelection([editor.indexFromPos(from), editor.indexFromPos(to)]);
     });
@@ -46,7 +46,6 @@
       }
       var style = "";
       for(var i = 0; i < ids.length; i++ ) {
-        //".user { background: green; } .user-cursor { background: blue; }"
         style += ".user-" + ids[i] + " { background: " + (sessions[ids[i]].color || "yellow") + "; }";
       }
       headStyle.innerHTML = style;
@@ -59,6 +58,14 @@
       if(typeof selection == "number") selection = [selection, selection];
       var from = cm.posFromIndex(selection[0]);
       var to = cm.posFromIndex(selection[1]);
+
+      // we mark up the range of text the other user has highlighted
+      var marker = markersBySessionId[sessionId];
+      if(marker) {
+        marker.clear();
+      }
+      markersBySessionId[sessionId] = markCursor(cm, sessionId, to, from);
+
       var cursor = cursorsBySessionId[sessionId];
       if(cursor === undefined) {
         cursor = createCursorWidget(cm, sessionId, session);
@@ -67,13 +74,6 @@
         updateCursor(cursor, sessionId, session);
       }
       cm.addWidget(to, cursor);
-
-      // we mark up the range of text the other user has highlighted
-      var marker = markersBySessionId[sessionId];
-      if(marker) {
-        marker.clear();
-      }
-      markersBySessionId[sessionId] = markCursor(cm, sessionId, to, from);
     }
 
     function markCursor(cm, sessionId, to, from) {
