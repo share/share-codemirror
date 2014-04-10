@@ -5,13 +5,42 @@
 <script src="/codemirror.js"></script>
 <script src="/channel/bcsocket.js"></script>
 <script src="/share.uncompressed.js"></script>
-<script src="/dispatch-socket.js"></script>
 <script src="/share-codemirror.js"></script>
 <script src="/share-codemirror-cursor.js"></script>
+<script src="/d3.min.js"></script>
+<style>
+
+.CodeMirror {
+  line-height: 2;
+  border: 1px solid grey;
+}
+.CodeMirror-lines {
+  padding: 20px 10px;
+}
+.user-name {
+  color: white;
+  font-size: 10px;
+  line-height: 1;
+  padding: 1px 3px;
+
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.user-cursor {
+  background: black;
+}
+#users input {
+  width: 250px;
+}
+</style>
 </head>
 <body>
 <textarea id="pad">Connecting...</textarea>
-<button id="monkey">Infinite Monkey</button>
+<div id="myself">
+  <input value="">
+</div>
+<div id="users"></div>
 <script>
 var elem = document.getElementById('pad');
 var cm = CodeMirror.fromTextArea(elem, {
@@ -19,10 +48,7 @@ var cm = CodeMirror.fromTextArea(elem, {
 });
 
 var bcs = new BCSocket(null, {reconnect: true});
-var ds = new DispatchSocket(bcs);
-shareCodeMirrorCursor(cm, ds); // TODO: cm.attachSharedCursors(ds);
-
-var sjs = new window.sharejs.Connection(ds);
+var sjs = new window.sharejs.Connection(bcs);
 
 var doc = sjs.get('users', 'sephx');
 
@@ -30,43 +56,61 @@ doc.subscribe();
 doc.whenReady(function () {
   if (!doc.type) doc.create('text');
   if (doc.type && doc.type.name === 'text') {
-    doc.attachCodeMirror(cm);
+    var ctx = doc.createContext();
+    doc.attachCodeMirror(cm, ctx);
+    doc.attachCodeMirrorCursor(cm, ctx);
+
+    // set the color for our session
+    var sessionIds = Object.keys(ctx.getPresence());
+    // colorbrewer
+    var colors = [
+      "#8dd3c7","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5"
+    ];
+    var color = colors[sessionIds.length % colors.length];
+    doc.setPresenceProperty("color", color);
+
+    d3.select("#myself")
+      .style("background", color)
+    .select("input")
+      .attr("value", doc.connection.id)
+      .on("keyup", function() {
+        doc.setPresenceProperty("name", this.value);
+      })
+
+    var ctx2 = doc.createContext();
+    ctx2.onPresence = function() {
+      var presence = ctx2.getPresence();
+      var sessionIds = Object.keys(presence);
+      var sessions = sessionIds.map(function(sid) {
+        return { id: sid, data: presence[sid] };
+      })
+
+      var userSel = d3.select("#users").selectAll("div.user-ui")
+        .data(sessions, function(d) { return d.id });
+
+      var userEnter = userSel.enter().append("div").classed("user-ui", true)
+        .append("span")
+
+      userSel.each(function(d) {
+        var clss = "user-" + d.id;
+        if(!this.classList.contains(clss))
+          this.classList.add(clss);
+      })
+
+      userSel.select("span").text(function(d) {
+        var name = d.data.name || d.id;
+        return name;
+      })
+      .style({
+        background: function(d) { return d.data.color || ""; }
+      })
+
+      userSel.exit().remove();
+    };
   }
 });
 
-document.getElementById('monkey').onclick = function() {
-  setInterval(monkeyType, 50);
-};
 
-function monkeyType() {
-  var textLength = cm.getValue().length;
-  var pos = Math.floor(Math.random()*textLength);
-  var from = cm.posFromIndex(pos);
-  var editLength = randomInt(10)
-  if(Math.random() < 0.9) {
-    // Add text
-    var text =  randomString(editLength);
-    cm.replaceRange(text, cm.posFromIndex(pos));
-  } else {
-    var endIndex = Math.max(pos + editLength, textLength-1);
-    var to = cm.posFromIndex(endIndex);
-    cm.replaceRange('', from, to);
-  }
-}
-
-function randomString(len) {
-	var chars = "0123456789\nABCDEF\nGHIJKLM\nNOPQRSTUVWXTZ\nabcde\nfghiklmnop\nqrstuvwxyz";
-	var result = '';
-	for (var i=0; i<len; i++) {
-		var rnum = randomInt(chars.length);
-		result += chars.substring(rnum, rnum+1);
-	}
-  return result;
-}
-
-function randomInt(max) {
-  return Math.floor(Math.random()*max);
-}
 
 </script>
 </body>

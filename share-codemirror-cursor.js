@@ -1,48 +1,118 @@
 (function () {
   'use strict';
 
-  function shareCodeMirrorCursor(cm, ds) {
-    cm.on('cursorActivity', function (doc) {
-      var startCur = doc.getCursor('start');
-      //var endCur = doc.getCursor('end');
+  function shareCodeMirrorCursor(cm, ctx) {
+    cm.on('cursorActivity', function (editor) {
+      var startCur = editor.getCursor('start');
+      var endCur = editor.getCursor('end');
 
       var from = startCur;
-      var to = {line: startCur.line, ch: startCur.ch + 1};
+      var to = {line: endCur.line, ch: endCur.ch+1};
 
-      if (ds) {
-        ds.send({_type: 'cursor', from: from, to: to});
-      }
+      ctx.setSelection([editor.indexFromPos(from), editor.indexFromPos(to)]);
     });
 
-    var cursorsByConnectionId = {};
+    var cursorsBySessionId = {};
+    var markersBySessionId = {};
     var myConnectionId;
 
-    ds.on_connectionId = function (msg) {
-      myConnectionId = msg.connectionId;
+    ctx.onPresence = function() {
+      var presence = ctx.getPresence();
+      var sessionIds = Object.keys(presence);
+      makeUserStyles(presence);
+      sessionIds.forEach(function(sessionId) {
+        var session = presence[sessionId];
+        displayCursor(sessionId, session);
+      })
+      var cursorIds = Object.keys(cursorsBySessionId);
+      cursorIds.forEach(function(cid) {
+        if(sessionIds.indexOf(cid) < 0) {
+          cursorsBySessionId[cid].parentElement.removeChild(cursorsBySessionId[cid])
+          markersBySessionId[cid].clear();
+          delete cursorsBySessionId[cid];
+          delete markersBySessionId[cid];
+        }
+      })
     };
 
-    ds.on_cursor = function (msg) {
-      if(msg.connectionId === myConnectionId) return;
-      var cursor = cursorsByConnectionId[msg.connectionId];
-      if(cursor === undefined) {
-        cursor = createCursorWidget(cm);
-        cursorsByConnectionId[msg.connectionId] = cursor;
+    function makeUserStyles(sessions) {
+      var ids = Object.keys(sessions);
+      var headStyle = document.getElementById("user-styles");
+      if(!headStyle) {
+        var head = document.getElementsByTagName("head")[0];
+        var headStyle = document.createElement("style");
+        headStyle.setAttribute("id", "user-styles");
+        head.appendChild(headStyle);
       }
-      console.log(cursorsByConnectionId);
-      cm.addWidget(msg.from, cursor);
-    };
+      var style = "";
+      for(var i = 0; i < ids.length; i++ ) {
+        //".user { background: green; } .user-cursor { background: blue; }"
+        style += ".user-" + ids[i] + " { background: " + (sessions[ids[i]].color || "yellow") + "; }";
+      }
+      headStyle.innerHTML = style;
+    }
+
+    function displayCursor(sessionId, session) {
+      // we make a cursor widget to display where the other user's cursor is
+      var selection = session._selection;
+      if(!selection) return;
+      if(typeof selection == "number") selection = [selection, selection];
+      var from = cm.posFromIndex(selection[0]);
+      var to = cm.posFromIndex(selection[1]);
+      var cursor = cursorsBySessionId[sessionId];
+      if(cursor === undefined) {
+        cursor = createCursorWidget(cm, sessionId, session);
+        cursorsBySessionId[sessionId] = cursor;
+      } else {
+        updateCursor(cursor, sessionId, session);
+      }
+      cm.addWidget(to, cursor);
+
+      // we mark up the range of text the other user has highlighted
+      var marker = markersBySessionId[sessionId];
+      if(marker) {
+        marker.clear();
+      }
+      markersBySessionId[sessionId] = markCursor(cm, sessionId, to, from);
+    }
+
+    function markCursor(cm, sessionId, to, from) {
+      var marker = cm.markText(from, to, { className: "user-" + sessionId });
+      return marker;
+    }
   }
 
-  function createCursorWidget(cm) {
+  function createCursorWidget(cm, sessionId, session) {
     var square = document.createElement('div');
-    square.style.width = cm.defaultCharWidth() + 'px';
-    square.style.height = cm.defaultTextHeight() + 'px';
-    square.style.top = '-' + cm.defaultTextHeight() + 'px';
+    //square.style.width = 3 + 'px';
+    //square.style.height = 3 + 'px';
+    square.style.top = '-' + (2.1 * cm.defaultTextHeight()) + 'px';
     square.style.position = 'relative';
-    square.style.background = '#FF00FF';
+    square.style.background = session.color || "black";
+    square.classList.add("user-name");
+    square.innerHTML = session.name || sessionId;
+
+    var line = document.createElement('div');
+    line.style.width = 1 + 'px';
+    line.style.height = 0.8 * cm.defaultTextHeight() + 'px';
+    line.style.top = '-' + cm.defaultTextHeight() + 'px';
+    line.style.position = 'relative';
+    line.style.background = session.color || "black";
+    line.classList.add("line");
+
     var cursor = document.createElement('div');
+    cursor.style.position = 'absolute';
+    cursor.appendChild(line);
     cursor.appendChild(square);
     return cursor;
+  }
+
+  function updateCursor(cursor, sessionId, session) {
+    var square = cursor.querySelector(".user-name");
+    square.style.background = session.color || "black";
+    square.innerHTML = session.name || sessionId;
+    var line = cursor.querySelector(".line");
+    line.style.background = session.color || "black";
   }
 
   // Exporting
@@ -58,7 +128,10 @@
       });
     } else {
       // Browser, no AMD
-      window.shareCodeMirrorCursor = shareCodeMirrorCursor;
+      window.sharejs.Doc.prototype.attachCodeMirrorCursor = function (cm, ctx) {
+        if (!ctx) ctx = this.createContext();
+        shareCodeMirrorCursor(cm, ctx);
+      };
     }
   }
 

@@ -10,6 +10,7 @@ var webserver = connect(
   connect["static"](__dirname),
   connect["static"](shareCodeMirror.scriptsDir),
   connect["static"](__dirname + '/../node_modules/codemirror/lib'),
+  connect["static"](__dirname + '/../node_modules/d3'),
   connect["static"](sharejs.scriptsDir)
 );
 
@@ -21,7 +22,7 @@ var share = sharejs.server.createClient({backend: backend});
 
 var clientsById = {};
 
-webserver.use(browserChannel({webserver: webserver}, function (client) {
+webserver.use(browserChannel({webserver: webserver, sessionTimeoutInterval: 5000}, function (client) {
   clientsById[client.id] = client;
   client.send({_type: 'connectionId', connectionId: client.id});
 
@@ -44,14 +45,12 @@ webserver.use(browserChannel({webserver: webserver}, function (client) {
         c.send(data);
       }
     } else {
-      
       if(data.a == 'sub') {
         var docId = data.d;
         var collectionName = data.c;
         // Client client.id is subbing to docId inside collectionName
         console.log('SUB', data);
       }
-      
       stream.push(data);
     }
   });
