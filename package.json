@@ -21,12 +21,12 @@
     "url": "https://github.com/share/share-codemirror/issues"
   },
   "devDependencies": {
-    "share": "~0.7",
+    "share": "git://github.com/share/ShareJS.git#presence",
+    "livedb": "git://github.com/share/livedb.git#presence",
+    "livedb-mongo": "~0.2.5",
     "codemirror": "git://github.com/marijnh/CodeMirror.git#master",
     "connect": "~2.11.0",
     "browserchannel": "~1.0.8",
-    "livedb": "~0.3",
-    "livedb-mongo": "~0.2.5",
     "mocha": "~1.14.0",
     "jsdom": "~0.8.8",
     "istanbul": "~0.1.44"
