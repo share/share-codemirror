@@ -8,7 +8,6 @@
   function shareCodeMirror(cm, ctx) {
     if (!ctx.provides.text) throw new Error('Cannot attach to non-text document');
 
-    var suppress = false;
     var text = ctx.get() || ''; // Due to a bug in share - get() returns undefined for empty docs.
     cm.setValue(text);
     check();
@@ -16,26 +15,28 @@
     // *** remote -> local changes
 
     ctx.onInsert = function (pos, text) {
-      suppress = true;
+      ctx.suppress = true;
       cm.replaceRange(text, cm.posFromIndex(pos));
-      suppress = false;
+      ctx.suppress = false;
       check();
     };
 
     ctx.onRemove = function (pos, length) {
-      suppress = true;
+      ctx.suppress = true;
       var from = cm.posFromIndex(pos);
       var to = cm.posFromIndex(pos + length);
       cm.replaceRange('', from, to);
-      suppress = false;
+      ctx.suppress = false;
       check();
     };
 
     // *** local -> remote changes
 
     cm.on('change', function (cm, change) {
-      if (suppress) return;
+      if (ctx.suppress) return;
+      ctx.suppress = true;
       applyToShareJS(cm, change);
+      ctx.suppress = false;
       check();
     });
 

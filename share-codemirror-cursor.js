@@ -3,6 +3,8 @@
 
   function shareCodeMirrorCursor(cm, ctx) {
     cm.on('cursorActivity', function (editor) {
+      if (ctx.suppress) return;
+      
       var startCur = editor.getCursor('start');
       var endCur = editor.getCursor('end');
 

@@ -24,7 +24,7 @@ var clientsById = {};
 
 webserver.use(browserChannel({webserver: webserver, sessionTimeoutInterval: 5000}, function (client) {
   clientsById[client.id] = client;
-  client.send({_type: 'connectionId', connectionId: client.id});
+  //client.send({_type: 'connectionId', connectionId: client.id});
 
   var stream = new Duplex({objectMode: true});
   stream._write = function (chunk, encoding, callback) {
@@ -38,21 +38,7 @@ webserver.use(browserChannel({webserver: webserver, sessionTimeoutInterval: 5000
   stream.headers = client.headers;
   stream.remoteAddress = stream.address;
   client.on('message', function (data) {
-    if(data._type) {
-      data.connectionId = client.id;
-      for(var clientId in clientsById) {
-        var c = clientsById[clientId];
-        c.send(data);
-      }
-    } else {
-      if(data.a == 'sub') {
-        var docId = data.d;
-        var collectionName = data.c;
-        // Client client.id is subbing to docId inside collectionName
-        console.log('SUB', data);
-      }
-      stream.push(data);
-    }
+    stream.push(data);
   });
   stream.on('error', function (msg) {
     console.log('ERROR', msg, client.id);
