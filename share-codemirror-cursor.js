@@ -16,7 +16,6 @@
 
     var cursorsBySessionId = {};
     var markersBySessionId = {};
-    var myConnectionId;
 
     ctx.onPresence = function () {
       var presence = ctx.getPresence();
@@ -42,7 +41,7 @@
       var headStyle = document.getElementById("user-styles");
       if (!headStyle) {
         var head = document.getElementsByTagName("head")[0];
-        var headStyle = document.createElement("style");
+        headStyle = document.createElement("style");
         headStyle.setAttribute("id", "user-styles");
         head.appendChild(headStyle);
       }
@@ -79,8 +78,7 @@
     }
 
     function markCursor(cm, sessionId, to, from) {
-      var marker = cm.markText(from, to, { className: "user-" + sessionId });
-      return marker;
+      return cm.markText(from, to, { className: "user-" + sessionId });
     }
   }
 
