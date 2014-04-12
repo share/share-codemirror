@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "share": "v0.7.0-alpha9",
-    "codemirror": "git://github.com/marijnh/CodeMirror.git#master",
+    "codemirror": "~3.23.0",
     "connect": "~2.11.0",
     "browserchannel": "~1.0.8",
     "livedb": "~0.2.6",
