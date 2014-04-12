@@ -24,6 +24,7 @@
       var cursorIds = Object.keys(cursorsBySessionId);
       cursorIds.forEach(function (cid) {
         if (sessionIds.indexOf(cid) < 0) {
+          // Remove widget
           cursorsBySessionId[cid].parentElement.removeChild(cursorsBySessionId[cid]);
           markersBySessionId[cid].clear();
           delete cursorsBySessionId[cid];
@@ -61,7 +62,7 @@
       if (marker) {
         marker.clear();
       }
-      markersBySessionId[sessionId] = markCursor(cm, sessionId, to, from);
+      markersBySessionId[sessionId] = markCursor(cm, sessionId, from, to);
 
       var cursor = cursorsBySessionId[sessionId];
       if (cursor === undefined) {
@@ -73,7 +74,7 @@
       cm.addWidget(to, cursor);
     }
 
-    function markCursor(cm, sessionId, to, from) {
+    function markCursor(cm, sessionId, from, to) {
       return cm.markText(from, to, { className: "user-" + sessionId });
     }
   }

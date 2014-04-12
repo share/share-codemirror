@@ -49,6 +49,7 @@ var cm = CodeMirror.fromTextArea(elem, {
 
 var bcs = new BCSocket(null, {reconnect: true});
 var sjs = new window.sharejs.Connection(bcs);
+sjs.debug = false;
 
 var doc = sjs.get('users', 'sephx');
 
@@ -75,7 +76,7 @@ doc.whenReady(function () {
       .attr("value", doc.connection.id)
       .on("keyup", function() {
         doc.setPresenceProperty("name", this.value);
-      })
+      });
 
     var ctx2 = doc.createContext();
     ctx2.onPresence = function() {
@@ -83,27 +84,23 @@ doc.whenReady(function () {
       var sessionIds = Object.keys(presence);
       var sessions = sessionIds.map(function(sid) {
         return { id: sid, data: presence[sid] };
-      })
+      });
 
       var userSel = d3.select("#users").selectAll("div.user-ui")
         .data(sessions, function(d) { return d.id });
-
-      var userEnter = userSel.enter().append("div").classed("user-ui", true)
-        .append("span")
 
       userSel.each(function(d) {
         var clss = "user-" + d.id;
         if(!this.classList.contains(clss))
           this.classList.add(clss);
-      })
+      });
 
-      userSel.select("span").text(function(d) {
-        var name = d.data.name || d.id;
-        return name;
+      userSel.select("span").text(function name(d) {
+          return d.data.name || d.id;
       })
       .style({
         background: function(d) { return d.data.color || ""; }
-      })
+      });
 
       userSel.exit().remove();
     };
