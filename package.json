@@ -23,8 +23,8 @@
   "devDependencies": {
     "share": "git://github.com/share/ShareJS.git#presence",
     "livedb": "git://github.com/share/livedb.git#presence",
-    "livedb-mongo": "~0.2.5",
-    "codemirror": "git://github.com/marijnh/CodeMirror.git#master",
+    "livedb-mongo": "~0.3.0",
+    "codemirror": "~3.23.0",
     "connect": "~2.11.0",
     "browserchannel": "~1.0.8",
     "mocha": "~1.14.0",
