@@ -24,11 +24,11 @@
       sessionIds.forEach(function (sessionId) {
         var session = presence[sessionId];
         displayCursor(sessionId, session);
-      })
+      });
       var cursorIds = Object.keys(cursorsBySessionId);
       cursorIds.forEach(function (cid) {
         if (sessionIds.indexOf(cid) < 0) {
-          cursorsBySessionId[cid].parentElement.removeChild(cursorsBySessionId[cid])
+          cursorsBySessionId[cid].parentElement.removeChild(cursorsBySessionId[cid]);
           markersBySessionId[cid].clear();
           delete cursorsBySessionId[cid];
           delete markersBySessionId[cid];
