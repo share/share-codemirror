@@ -5,13 +5,9 @@
     cm.on('cursorActivity', function (editor) {
       if (ctx.suppress) return;
 
-      var startCur = editor.getCursor('start');
-      var endCur = editor.getCursor('end');
-
-      var from = startCur;
-      var to = {line: endCur.line, ch: endCur.ch};
-
-      ctx.setSelection([editor.indexFromPos(from), editor.indexFromPos(to)]);
+      var start = editor.indexFromPos(editor.getCursor('start'));
+      var end = editor.indexFromPos(editor.getCursor('end'));
+      ctx.setSelection([ start, end]);
     });
 
     var cursorsBySessionId = {};
