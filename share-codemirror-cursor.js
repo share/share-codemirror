@@ -4,7 +4,7 @@
   function shareCodeMirrorCursor(cm, ctx) {
     cm.on('cursorActivity', function (editor) {
       if (ctx.suppress) return;
-      
+
       var startCur = editor.getCursor('start');
       var endCur = editor.getCursor('end');
 
@@ -18,17 +18,17 @@
     var markersBySessionId = {};
     var myConnectionId;
 
-    ctx.onPresence = function() {
+    ctx.onPresence = function () {
       var presence = ctx.getPresence();
       var sessionIds = Object.keys(presence);
       makeUserStyles(presence);
-      sessionIds.forEach(function(sessionId) {
+      sessionIds.forEach(function (sessionId) {
         var session = presence[sessionId];
         displayCursor(sessionId, session);
       })
       var cursorIds = Object.keys(cursorsBySessionId);
-      cursorIds.forEach(function(cid) {
-        if(sessionIds.indexOf(cid) < 0) {
+      cursorIds.forEach(function (cid) {
+        if (sessionIds.indexOf(cid) < 0) {
           cursorsBySessionId[cid].parentElement.removeChild(cursorsBySessionId[cid])
           markersBySessionId[cid].clear();
           delete cursorsBySessionId[cid];
@@ -40,14 +40,14 @@
     function makeUserStyles(sessions) {
       var ids = Object.keys(sessions);
       var headStyle = document.getElementById("user-styles");
-      if(!headStyle) {
+      if (!headStyle) {
         var head = document.getElementsByTagName("head")[0];
         var headStyle = document.createElement("style");
         headStyle.setAttribute("id", "user-styles");
         head.appendChild(headStyle);
       }
       var style = "";
-      for(var i = 0; i < ids.length; i++ ) {
+      for (var i = 0; i < ids.length; i++) {
         style += ".user-" + ids[i] + " { background: " + (sessions[ids[i]].color || "yellow") + "; }";
       }
       headStyle.innerHTML = style;
@@ -56,20 +56,20 @@
     function displayCursor(sessionId, session) {
       // we make a cursor widget to display where the other user's cursor is
       var selection = session._selection;
-      if(!selection) return;
-      if(typeof selection == "number") selection = [selection, selection];
+      if (!selection) return;
+      if (typeof selection == "number") selection = [selection, selection];
       var from = cm.posFromIndex(selection[0]);
       var to = cm.posFromIndex(selection[1]);
 
       // we mark up the range of text the other user has highlighted
       var marker = markersBySessionId[sessionId];
-      if(marker) {
+      if (marker) {
         marker.clear();
       }
       markersBySessionId[sessionId] = markCursor(cm, sessionId, to, from);
 
       var cursor = cursorsBySessionId[sessionId];
-      if(cursor === undefined) {
+      if (cursor === undefined) {
         cursor = createCursorWidget(cm, sessionId, session);
         cursorsBySessionId[sessionId] = cursor;
       } else {
