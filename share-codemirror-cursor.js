@@ -11,7 +11,6 @@
     });
 
     var cursorsBySessionId = {};
-    var markersBySessionId = {};
 
     ctx.onPresence = function () {
       var presence = ctx.getPresence();
@@ -24,11 +23,8 @@
       var cursorIds = Object.keys(cursorsBySessionId);
       cursorIds.forEach(function (cid) {
         if (sessionIds.indexOf(cid) < 0) {
-          // Remove widget
-          cursorsBySessionId[cid].parentElement.removeChild(cursorsBySessionId[cid]);
-          markersBySessionId[cid].clear();
+          cursorsBySessionId[cid].remove();
           delete cursorsBySessionId[cid];
-          delete markersBySessionId[cid];
         }
       })
     };
@@ -57,59 +53,56 @@
       var from = cm.posFromIndex(selection[0]);
       var to = cm.posFromIndex(selection[1]);
 
-      // we mark up the range of text the other user has highlighted
-      var marker = markersBySessionId[sessionId];
-      if (marker) {
-        marker.clear();
-      }
-      markersBySessionId[sessionId] = markCursor(cm, sessionId, from, to);
-
       var cursor = cursorsBySessionId[sessionId];
       if (cursor === undefined) {
-        cursor = createCursorWidget(cm, sessionId, session);
+        cursor = new Cursor(cm, sessionId);
         cursorsBySessionId[sessionId] = cursor;
-      } else {
-        updateCursor(cursor, sessionId, session);
       }
-      cm.addWidget(to, cursor);
+      cursor.update(session, from, to);
     }
 
-    function markCursor(cm, sessionId, from, to) {
-      return cm.markText(from, to, { className: "user-" + sessionId });
+    function Cursor(cm, sessionId) {
+      var caret = document.createElement('pre');
+
+      caret.style.borderLeftWidth = '2px';
+      caret.style.borderLeftStyle = 'solid';
+      caret.style.height = cm.defaultTextHeight() + 'px';
+      caret.style.marginTop = '-' + cm.defaultTextHeight() + 'px';
+      caret.innerHTML = '&nbsp;';
+
+      var owner = document.createElement('div');
+      owner.style.height = 0.8 * cm.defaultTextHeight() + 'px';
+      owner.style.marginTop = '-' + (2 * cm.defaultTextHeight()) + 'px';
+      owner.style.zIndex = 1000;
+
+      var widget = document.createElement('div');
+      widget.style.position = 'absolute';
+      widget.appendChild(caret);
+      widget.appendChild(owner);
+
+      var marker;
+
+      this.update = function (session, from, to) {
+        caret.style.borderLeftColor = session.color || 'black';
+        owner.style.background = session.color || "black";
+        owner.innerHTML = session.name || sessionId;
+
+        // we mark up the range of text the other user has highlighted
+        if (marker) {
+          marker.clear();
+        }
+        marker = cm.markText(from, to, { className: "user-" + sessionId })
+
+        cm.addWidget(to, widget);
+      };
+
+      this.remove = function () {
+        widget.parentElement.removeChild(widget);
+        if (marker) {
+          marker.clear();
+        }
+      }
     }
-  }
-
-  function createCursorWidget(cm, sessionId, session) {
-    var square = document.createElement('div');
-    //square.style.width = 3 + 'px';
-    //square.style.height = 3 + 'px';
-    square.style.top = '-' + (2.1 * cm.defaultTextHeight()) + 'px';
-    square.style.position = 'relative';
-    square.style.background = session.color || "black";
-    square.classList.add("user-name");
-    square.innerHTML = session.name || sessionId;
-
-    var line = document.createElement('div');
-    line.style.width = 1 + 'px';
-    line.style.height = 0.8 * cm.defaultTextHeight() + 'px';
-    line.style.top = '-' + cm.defaultTextHeight() + 'px';
-    line.style.position = 'relative';
-    line.style.background = session.color || "black";
-    line.classList.add("line");
-
-    var cursor = document.createElement('div');
-    cursor.style.position = 'absolute';
-    cursor.appendChild(line);
-    cursor.appendChild(square);
-    return cursor;
-  }
-
-  function updateCursor(cursor, sessionId, session) {
-    var square = cursor.querySelector(".user-name");
-    square.style.background = session.color || "black";
-    square.innerHTML = session.name || sessionId;
-    var line = cursor.querySelector(".line");
-    line.style.background = session.color || "black";
   }
 
   // Exporting
