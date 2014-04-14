@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "share": "v0.7.0-alpha9",
-    "codemirror": "~3.23.0",
+    "codemirror": "~4.0.3",
     "connect": "~2.11.0",
     "browserchannel": "~1.0.8",
     "livedb": "~0.2.6",
