@@ -83,8 +83,10 @@
       var marker;
 
       this.update = function (session, from, to) {
-        caret.style.borderLeftColor = session.color || 'black';
-        owner.style.background = session.color || "black";
+        var defaultColor = '#dddddd';
+
+        caret.style.borderLeftColor = session.color || defaultColor;
+        owner.style.background = session.color || defaultColor;
         owner.innerHTML = session.name || sessionId;
 
         // We mark up the range of text the other user has highlighted
