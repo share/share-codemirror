@@ -71,12 +71,12 @@
       caret.innerHTML = '&nbsp;';
 
       var owner = document.createElement('div');
-      owner.style.height = 0.8 * cm.defaultTextHeight() + 'px';
+      owner.style.height = cm.defaultTextHeight() + 'px';
       owner.style.marginTop = '-' + (2 * cm.defaultTextHeight()) + 'px';
-      owner.style.zIndex = 1000;
 
       var widget = document.createElement('div');
       widget.style.position = 'absolute';
+      widget.style.zIndex = 1000;
       widget.appendChild(caret);
       widget.appendChild(owner);
 
