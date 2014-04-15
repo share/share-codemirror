@@ -67,43 +67,12 @@
             var color = colors[sessionIds.length % colors.length];
             doc.setPresenceProperty("color", color);
 
-            d3.select("#myself")
-                    .style("background", color)
-                    .select("input")
-                    .attr("value", doc.connection.id)
-                    .on("keyup", function () {
-                        doc.setPresenceProperty("name", this.value);
-                    });
-
-            var ctx2 = doc.createContext();
-            ctx2.onPresence = function () {
-                var presence = ctx2.getPresence();
-                var sessionIds = Object.keys(presence);
-                var sessions = sessionIds.map(function (sid) {
-                    return { id: sid, data: presence[sid] };
-                });
-
-                var userSel = d3.select("#users").selectAll("div.user-ui")
-                        .data(sessions, function (d) {
-                            return d.id
-                        });
-
-                userSel.each(function (d) {
-                    var clss = "user-" + d.id;
-                    if (!this.classList.contains(clss))
-                        this.classList.add(clss);
-                });
-
-                userSel.select("span").text(function name(d) {
-                    return d.data.name || d.id;
-                })
-                        .style({
-                            background: function (d) {
-                                return d.data.color || "";
-                            }
-                        });
-
-                userSel.exit().remove();
+            var myself = document.getElementById('myself');
+            myself.style.background = color;
+            var input = myself.getElementsByTagName("input")[0];
+            input.value = doc.connection.id;
+            input.onkeyup = function () {
+                doc.setPresenceProperty("name", input.value);
             };
         }
     });

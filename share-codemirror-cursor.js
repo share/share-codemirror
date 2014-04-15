@@ -7,7 +7,7 @@
 
       var start = editor.indexFromPos(editor.getCursor('start'));
       var end = editor.indexFromPos(editor.getCursor('end'));
-      ctx.setSelection([ start, end]);
+      ctx.setSelection([start, end]);
     });
 
     var cursorsBySessionId = {};
@@ -80,27 +80,12 @@
       widget.appendChild(caret);
       widget.appendChild(owner);
 
-      var marker, displayTimer, lastFrom, lastTo;
+      var marker;
 
       this.update = function (session, from, to) {
-        var hasMoved = !lastFrom || !lastTo ||
-          lastFrom.ch != from.ch || lastFrom.line != from.line ||
-          lastTo.ch != to.ch || lastTo.line != to.line;
-        if (!hasMoved) return;
-
-        lastFrom = from;
-        lastTo = to;
-
         caret.style.borderLeftColor = session.color || 'black';
         owner.style.background = session.color || "black";
         owner.innerHTML = session.name || sessionId;
-
-        // We show the cursor owner for 5 seconds, then hide it until the next time it moves.
-        owner.style.display = 'block';
-        if (displayTimer) clearTimeout(displayTimer);
-        displayTimer = setTimeout(function () {
-          owner.style.display = 'none';
-        }, 5000);
 
         // We mark up the range of text the other user has highlighted
         if (marker) {
