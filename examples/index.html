@@ -1,105 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/codemirror.css">
-<script src="/codemirror.js"></script>
-<script src="/channel/bcsocket.js"></script>
-<script src="/share.uncompressed.js"></script>
-<script src="/share-codemirror.js"></script>
-<script src="/share-codemirror-cursor.js"></script>
-<script src="/d3.min.js"></script>
-<style>
+    <link rel="stylesheet" href="/codemirror.css">
+    <script src="/codemirror.js"></script>
+    <script src="/channel/bcsocket.js"></script>
+    <script src="/share.uncompressed.js"></script>
+    <script src="/share-codemirror.js"></script>
+    <script src="/share-codemirror-cursor.js"></script>
+    <script src="/d3.min.js"></script>
 
-.user-name {
-  color: white;
-  font-size: 10px;
-  line-height: 1;
-  padding: 1px 3px;
+    <style>
 
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-}
-.user-cursor {
-  background: black;
-}
-#users input {
-  width: 250px;
-}
-</style>
+        .user-name {
+            color: white;
+            font-size: 10px;
+            line-height: 1;
+            padding: 1px 3px;
+
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .user-cursor {
+            background: black;
+        }
+
+        #users input {
+            width: 250px;
+        }
+    </style>
 </head>
 <body>
 <textarea id="pad">Connecting...</textarea>
+
 <div id="myself">
-  <input value="">
+    <input value="">
 </div>
 <div id="users"></div>
 <script>
-var elem = document.getElementById('pad');
-var cm = CodeMirror.fromTextArea(elem, {
-  mode: "text/plain"
-});
+    var elem = document.getElementById('pad');
+    var cm = CodeMirror.fromTextArea(elem, {
+        mode: "text/plain"
+    });
 
-var bcs = new BCSocket(null, {reconnect: true});
-var sjs = new window.sharejs.Connection(bcs);
-sjs.debug = false;
+    var bcs = new BCSocket(null, {reconnect: true});
+    var sjs = new window.sharejs.Connection(bcs);
+    sjs.debug = false;
 
-var doc = sjs.get('users', 'sephx');
+    var doc = sjs.get('users', 'sephx');
 
-doc.subscribe();
-doc.whenReady(function () {
-  if (!doc.type) doc.create('text');
-  if (doc.type && doc.type.name === 'text') {
-    var ctx = doc.createContext();
-    doc.attachCodeMirror(cm, ctx);
-    doc.attachCodeMirrorCursor(cm, ctx);
+    doc.subscribe();
+    doc.whenReady(function () {
+        if (!doc.type) doc.create('text');
+        if (doc.type && doc.type.name === 'text') {
+            var ctx = doc.createContext();
+            doc.attachCodeMirror(cm, ctx);
+            doc.attachCodeMirrorCursor(cm, ctx);
 
-    // set the color for our session
-    var sessionIds = Object.keys(ctx.getPresence());
-    // colorbrewer
-    var colors = [
-      "#8dd3c7","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5"
-    ];
-    var color = colors[sessionIds.length % colors.length];
-    doc.setPresenceProperty("color", color);
+            // set the color for our session
+            var sessionIds = Object.keys(ctx.getPresence());
+            // colorbrewer
+            var colors = [
+                "#8dd3c7", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd", "#ccebc5"
+            ];
+            var color = colors[sessionIds.length % colors.length];
+            doc.setPresenceProperty("color", color);
 
-    d3.select("#myself")
-      .style("background", color)
-    .select("input")
-      .attr("value", doc.connection.id)
-      .on("keyup", function() {
-        doc.setPresenceProperty("name", this.value);
-      });
+            d3.select("#myself")
+                    .style("background", color)
+                    .select("input")
+                    .attr("value", doc.connection.id)
+                    .on("keyup", function () {
+                        doc.setPresenceProperty("name", this.value);
+                    });
 
-    var ctx2 = doc.createContext();
-    ctx2.onPresence = function() {
-      var presence = ctx2.getPresence();
-      var sessionIds = Object.keys(presence);
-      var sessions = sessionIds.map(function(sid) {
-        return { id: sid, data: presence[sid] };
-      });
+            var ctx2 = doc.createContext();
+            ctx2.onPresence = function () {
+                var presence = ctx2.getPresence();
+                var sessionIds = Object.keys(presence);
+                var sessions = sessionIds.map(function (sid) {
+                    return { id: sid, data: presence[sid] };
+                });
 
-      var userSel = d3.select("#users").selectAll("div.user-ui")
-        .data(sessions, function(d) { return d.id });
+                var userSel = d3.select("#users").selectAll("div.user-ui")
+                        .data(sessions, function (d) {
+                            return d.id
+                        });
 
-      userSel.each(function(d) {
-        var clss = "user-" + d.id;
-        if(!this.classList.contains(clss))
-          this.classList.add(clss);
-      });
+                userSel.each(function (d) {
+                    var clss = "user-" + d.id;
+                    if (!this.classList.contains(clss))
+                        this.classList.add(clss);
+                });
 
-      userSel.select("span").text(function name(d) {
-          return d.data.name || d.id;
-      })
-      .style({
-        background: function(d) { return d.data.color || ""; }
-      });
+                userSel.select("span").text(function name(d) {
+                    return d.data.name || d.id;
+                })
+                        .style({
+                            background: function (d) {
+                                return d.data.color || "";
+                            }
+                        });
 
-      userSel.exit().remove();
-    };
-  }
-});
-
+                userSel.exit().remove();
+            };
+        }
+    });
 
 
 </script>
