@@ -80,18 +80,33 @@
       widget.appendChild(caret);
       widget.appendChild(owner);
 
-      var marker;
+      var marker, displayTimer, lastFrom, lastTo;
 
       this.update = function (session, from, to) {
+        var hasMoved = !lastFrom || !lastTo ||
+          lastFrom.ch != from.ch || lastFrom.line != from.line ||
+          lastTo.ch != to.ch || lastTo.line != to.line;
+        if (!hasMoved) return;
+
+        lastFrom = from;
+        lastTo = to;
+
         caret.style.borderLeftColor = session.color || 'black';
         owner.style.background = session.color || "black";
         owner.innerHTML = session.name || sessionId;
 
-        // we mark up the range of text the other user has highlighted
+        // We show the cursor owner for 5 seconds, then hide it until the next time it moves.
+        owner.style.display = 'block';
+        if (displayTimer) clearTimeout(displayTimer);
+        displayTimer = setTimeout(function () {
+          owner.style.display = 'none';
+        }, 5000);
+
+        // We mark up the range of text the other user has highlighted
         if (marker) {
           marker.clear();
         }
-        marker = cm.markText(from, to, { className: "user-" + sessionId })
+        marker = cm.markText(from, to, { className: "user-" + sessionId });
 
         cm.addWidget(to, widget);
       };
