@@ -4,7 +4,7 @@
   "description": "CodeMirror bindings for ShareJS",
   "main": "share-codemirror.js",
   "scripts": {
-    "pretest": "cd node_modules/share && npm install",
+    "pretest": "cd node_modules/share && UGLIFY=../../node_modules/.bin/uglifyjs make webclient/share.uncompressed.js",
     "test": "node_modules/.bin/mocha"
   },
   "repository": {
@@ -21,14 +21,15 @@
     "url": "https://github.com/share/share-codemirror/issues"
   },
   "devDependencies": {
-    "share": "git://github.com/share/ShareJS.git#presence",
-    "livedb": "git://github.com/share/livedb.git#presence",
-    "livedb-mongo": "~0.3.0",
-    "codemirror": "~4.0.3",
+    "browserchannel": "~1.2.0",
+    "codemirror": "~4.2.0",
     "connect": "~2.11.0",
-    "browserchannel": "~1.0.8",
-    "mocha": "~1.14.0",
+    "istanbul": "~0.2.10",
     "jsdom": "~0.8.8",
-    "istanbul": "~0.1.44"
+    "livedb": "git://github.com/share/livedb.git#f03086cdf51ffc80c725f105c7236c2997d74eac",
+    "livedb-mongo": "~0.3.2",
+    "mocha": "~1.20.0",
+    "share": "git://github.com/share/ShareJS.git#94dd9e0659c9b6953ba888f5dde8ce223a71f2ec",
+    "uglify-js": "~2.4.13"
   }
 }
