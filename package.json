@@ -25,7 +25,7 @@
     "codemirror": "~4.2.0",
     "connect": "~2.11.0",
     "istanbul": "~0.2.10",
-    "jsdom": "~0.8.8",
+    "jsdom": "~0.10.6",
     "livedb": "git://github.com/share/livedb.git#f03086cdf51ffc80c725f105c7236c2997d74eac",
     "livedb-mongo": "~0.3.2",
     "mocha": "~1.20.0",
