@@ -71,8 +71,10 @@
       caret.innerHTML = '&nbsp;';
 
       var owner = document.createElement('div');
-      owner.style.height = cm.defaultTextHeight() + 'px';
-      owner.style.marginTop = '-' + (2 * cm.defaultTextHeight()) + 'px';
+      var ownerFactor = 0.8; // Relative size of owner font
+      owner.style.height = cm.defaultTextHeight() * ownerFactor + 'px';
+      owner.style['font-size'] = cm.defaultTextHeight() * ownerFactor + 'px';
+      owner.style.marginTop = '-' + ((1 + ownerFactor) * cm.defaultTextHeight()) + 'px';
 
       var widget = document.createElement('div');
       widget.style.position = 'absolute';
