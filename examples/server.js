@@ -11,6 +11,7 @@ var webserver = connect(
   connect["static"](shareCodeMirror.scriptsDir),
   connect["static"](__dirname + '/../node_modules/codemirror/lib'),
   connect["static"](__dirname + '/../node_modules/tinycolor2/dist'),
+  connect["static"](__dirname + '/../node_modules/lodash/dist'),
   connect["static"](sharejs.scriptsDir)
 );
 

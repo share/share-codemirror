@@ -106,25 +106,11 @@
       var marker;
       var inactiveTimer;
 
-      function isSessionEqual(s1, s2) {
-        if(s1 === undefined && s2 === undefined) return true;
-        if(s1 === undefined && s2) return false;
-        if(s2 === undefined && s1) return false;
-        var result =
-          s1._selection[0] === s2._selection[0] &&
-          s1._selection[1] === s2._selection[1] &&
-          s1.name === s2.name &&
-          s1.color === s2.color &&
-          s1.selectionColor === s2.selectionColor &&
-          s1.textColor === s2.textColor;
-        return result;
-      }
-
       this.update = function (session, from, to) {
-        if(isSessionEqual(session, lastSession)) {
+        if(_.isEqual(session, lastSession)) {
           return;
         }
-        lastSession = session;
+        lastSession = _.cloneDeep(session);
 
         caret.style.borderLeftColor = session.color || options.color;
         dot.style.borderLeftColor = session.color || options.color;

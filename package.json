@@ -28,6 +28,7 @@
     "jsdom": "~0.10.6",
     "livedb": "git://github.com/share/livedb.git#f03086cdf51ffc80c725f105c7236c2997d74eac",
     "livedb-mongo": "~0.3.2",
+    "lodash": "~2.4.1",
     "mocha": "~1.20.0",
     "share": "git://github.com/share/ShareJS.git#94dd9e0659c9b6953ba888f5dde8ce223a71f2ec",
     "tinycolor2": "^0.10.0",
