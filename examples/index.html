@@ -7,6 +7,7 @@
     <script src="/share.uncompressed.js"></script>
     <script src="/share-codemirror.js"></script>
     <script src="/share-codemirror-cursor.js"></script>
+    <script src="/tinycolor-min.js"></script>
 
     <style>
 
@@ -65,6 +66,8 @@
             ];
             var color = colors[sessionIds.length % colors.length];
             doc.setPresenceProperty("color", color);
+            var selectionColor = tinycolor.lighten(color).toHexString();
+            doc.setPresenceProperty("selectionColor", selectionColor);
 
             var myself = document.getElementById('myself');
             myself.style.background = color;

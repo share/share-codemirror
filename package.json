@@ -30,6 +30,7 @@
     "livedb-mongo": "~0.3.2",
     "mocha": "~1.20.0",
     "share": "git://github.com/share/ShareJS.git#94dd9e0659c9b6953ba888f5dde8ce223a71f2ec",
+    "tinycolor2": "^0.10.0",
     "uglify-js": "~2.4.13"
   }
 }

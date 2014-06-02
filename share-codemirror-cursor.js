@@ -40,7 +40,9 @@
       }
       var style = "";
       for (var i = 0; i < ids.length; i++) {
-        style += ".user-" + ids[i] + " { background: " + (sessions[ids[i]].color || "yellow") + "; }";
+        var session = sessions[ids[i]];
+        var color = session.selectionColor || session.color || "yellow";
+        style += ".user-" + ids[i] + " { background: " + color + "; }";
       }
       headStyle.innerHTML = style;
     }
@@ -75,6 +77,8 @@
       owner.style.height = cm.defaultTextHeight() * ownerFactor + 'px';
       owner.style['font-size'] = cm.defaultTextHeight() * ownerFactor + 'px';
       owner.style.marginTop = '-' + ((1 + ownerFactor) * cm.defaultTextHeight()) + 'px';
+
+      owner.style['user-select'] = 'none';
 
       var widget = document.createElement('div');
       widget.style.position = 'absolute';

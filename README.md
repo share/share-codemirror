@@ -5,10 +5,23 @@ CodeMirror bindings for ShareJS >= 0.7.x.
 
 ```javascript
 var cm = CodeMirror.fromTextArea(elem);
-shareDoc.attachCodeMirror(cm);
+
+var ctx = shareDoc.createContext();
+shareDoc.attachCodeMirror(cm, ctx);
+shareDoc.attachCodeMirrorCursor(cm, ctx);
 ```
 
 That's it. You now have 2-way sync between your ShareJS and CodeMirror.
+
+### Configuration
+
+The visual representation of cursors can be modified with presence properties:
+
+```javascript
+shareDoc.setPresenceProperty("name", name);
+shareDoc.setPresenceProperty("color", color);
+shareDoc.setPresenceProperty("selectionColor", selectionColor);
+```
 
 ## Install with Bower
 

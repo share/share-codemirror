@@ -10,7 +10,7 @@ var webserver = connect(
   connect["static"](__dirname),
   connect["static"](shareCodeMirror.scriptsDir),
   connect["static"](__dirname + '/../node_modules/codemirror/lib'),
-  connect["static"](__dirname + '/../node_modules/d3'),
+  connect["static"](__dirname + '/../node_modules/tinycolor2/dist'),
   connect["static"](sharejs.scriptsDir)
 );
 
