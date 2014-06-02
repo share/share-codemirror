@@ -15,13 +15,29 @@ That's it. You now have 2-way sync between your ShareJS and CodeMirror.
 
 ### Configuration
 
-The visual representation of cursors can be modified with presence properties:
+The `attachCodeMirrorCursor` takes an optional 3rd `options` argument where the
+following options may be set:
+
+* `inactiveTimeout` - how long the "name" part of a cursor is visible after inactivity
+* `color` - the color of the cursor
+* `selectionColor` - the color of text selection
+* `textColor` - the color of the "name" text
+
+These attributes can also be set on a per-user basis with presence properties:
 
 ```javascript
 shareDoc.setPresenceProperty("name", name);
 shareDoc.setPresenceProperty("color", color);
 shareDoc.setPresenceProperty("selectionColor", selectionColor);
+shareDoc.setPresenceProperty("textColor", textColor);
+shareDoc.setPresenceProperty("inactiveTimeout", 10000);
 ```
+
+Share-Codemirror will provide default values for all of these properties if you
+don't set them explicitly. You may want to use a color library such as
+[TinyColor](http://bgrins.github.io/TinyColor/)
+to manipulate colors, for example setting `selectionColor` a bit brighter than
+`color`, or finding a legible `textColor` based on `color`.
 
 ## Install with Bower
 

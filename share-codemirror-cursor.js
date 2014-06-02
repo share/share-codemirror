@@ -1,7 +1,13 @@
 (function () {
   'use strict';
 
-  function shareCodeMirrorCursor(cm, ctx) {
+  function shareCodeMirrorCursor(cm, ctx, options) {
+    options = options || {};
+    options.selectionColor = options.selectionColor || 'yellow';
+    options.color = options.color || '#dddddd';
+    options.textColor = options.textColor || 'black';
+    options.inactiveTimeout = options.inactiveTimeout || 5000;
+
     cm.on('cursorActivity', function (editor) {
       if (ctx.suppress) return;
 
@@ -41,8 +47,8 @@
       var style = "";
       for (var i = 0; i < ids.length; i++) {
         var session = sessions[ids[i]];
-        var color = session.selectionColor || session.color || "yellow";
-        style += ".user-" + ids[i] + " { background: " + color + "; }";
+        var selectionColor = session.selectionColor || session.color || options.selectionColor;
+        style += ".user-" + ids[i] + " { background: " + selectionColor + "; }";
       }
       headStyle.innerHTML = style;
     }
@@ -86,13 +92,33 @@
       widget.appendChild(caret);
       widget.appendChild(owner);
 
+      var lastSession;
       var marker;
+      var inactiveTimer;
+
+      function isSessionEqual(s1, s2) {
+        if(s1 === undefined && s2 === undefined) return true;
+        if(s1 === undefined && s2) return false;
+        if(s2 === undefined && s1) return false;
+        var result =
+          s1._selection[0] === s2._selection[0] &&
+          s1._selection[1] === s2._selection[1] &&
+          s1.name === s2.name &&
+          s1.color === s2.color &&
+          s1.selectionColor === s2.selectionColor &&
+          s1.textColor === s2.textColor;
+        return result;
+      }
 
       this.update = function (session, from, to) {
-        var defaultColor = '#dddddd';
+        if(isSessionEqual(session, lastSession)) {
+          return;
+        }
+        lastSession = session;
 
-        caret.style.borderLeftColor = session.color || defaultColor;
-        owner.style.background = session.color || defaultColor;
+        caret.style.borderLeftColor = session.color || options.color;
+        owner.style.background = session.color || options.color;
+        owner.style.color = session.textColor || options.textColor;
         owner.innerHTML = session.name || sessionId;
 
         // We mark up the range of text the other user has highlighted
@@ -102,6 +128,16 @@
         marker = cm.markText(from, to, { className: "user-" + sessionId });
 
         cm.addWidget(to, widget);
+
+        if(inactiveTimer) {
+          clearTimeout(inactiveTimer);
+        }
+        owner.style.display = 'block';
+        var inactiveTimeout = session.inactiveTimeout || options.inactiveTimeout;
+console.log(inactiveTimeout);
+        inactiveTimer = setTimeout(function() {
+          owner.style.display = 'none';
+        }, inactiveTimeout);
       };
 
       this.remove = function () {
@@ -126,9 +162,9 @@
       });
     } else {
       // Browser, no AMD
-      window.sharejs.Doc.prototype.attachCodeMirrorCursor = function (cm, ctx) {
+      window.sharejs.Doc.prototype.attachCodeMirrorCursor = function (cm, ctx, options) {
         if (!ctx) ctx = this.createContext();
-        shareCodeMirrorCursor(cm, ctx);
+        shareCodeMirrorCursor(cm, ctx, options);
       };
     }
   }
