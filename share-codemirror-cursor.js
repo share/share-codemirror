@@ -70,27 +70,37 @@
     }
 
     function Cursor(cm, sessionId) {
-      var caret = document.createElement('pre');
+      // The parent element of the cursor
+      var widget = document.createElement('div');
+      widget.style.position = 'absolute';
+      widget.style.zIndex = 1000;
 
+      // The caret
+      var caret = document.createElement('pre');
       caret.style.borderLeftWidth = '2px';
       caret.style.borderLeftStyle = 'solid';
       caret.style.height = cm.defaultTextHeight() + 'px';
       caret.style.marginTop = '-' + cm.defaultTextHeight() + 'px';
       caret.innerHTML = '&nbsp;';
+      widget.appendChild(caret);
 
+      // The name
       var owner = document.createElement('div');
       var ownerFactor = 0.8; // Relative size of owner font
       owner.style.height = cm.defaultTextHeight() * ownerFactor + 'px';
       owner.style['font-size'] = cm.defaultTextHeight() * ownerFactor + 'px';
       owner.style.marginTop = '-' + ((1 + ownerFactor) * cm.defaultTextHeight()) + 'px';
-
-      owner.style['user-select'] = 'none';
-
-      var widget = document.createElement('div');
-      widget.style.position = 'absolute';
-      widget.style.zIndex = 1000;
-      widget.appendChild(caret);
       widget.appendChild(owner);
+
+      var dot = document.createElement('pre');
+      var dotFactor = 0.5; // Relative size of owner font
+      dot.style.position = 'relative';
+      dot.style.borderLeftWidth = '6px';
+      dot.style.borderLeftStyle = 'solid';
+      dot.style.height = cm.defaultTextHeight() * dotFactor + 'px';
+      dot.style.marginTop = '-' + ((1 + dotFactor) * cm.defaultTextHeight()) + 'px';
+      dot.style.marginLeft = '-2px';
+      widget.appendChild(dot);
 
       var lastSession;
       var marker;
@@ -117,6 +127,7 @@
         lastSession = session;
 
         caret.style.borderLeftColor = session.color || options.color;
+        dot.style.borderLeftColor = session.color || options.color;
         owner.style.background = session.color || options.color;
         owner.style.color = session.textColor || options.textColor;
         owner.innerHTML = session.name || sessionId;
@@ -132,10 +143,11 @@
         if(inactiveTimer) {
           clearTimeout(inactiveTimer);
         }
+        dot.style.display = 'none';
         owner.style.display = 'block';
         var inactiveTimeout = session.inactiveTimeout || options.inactiveTimeout;
-console.log(inactiveTimeout);
         inactiveTimer = setTimeout(function() {
+          dot.style.display = 'block';
           owner.style.display = 'none';
         }, inactiveTimeout);
       };
