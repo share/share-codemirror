@@ -69,6 +69,8 @@
       cursor.update(session, from, to);
     }
 
+    var ownerFactor = 0.8; // Relative size of owner font
+
     function Cursor(cm, sessionId) {
       // The parent element of the cursor
       var widget = document.createElement('div');
@@ -86,10 +88,8 @@
 
       // The name
       var owner = document.createElement('div');
-      var ownerFactor = 0.8; // Relative size of owner font
       owner.style.height = cm.defaultTextHeight() * ownerFactor + 'px';
       owner.style['font-size'] = cm.defaultTextHeight() * ownerFactor + 'px';
-      owner.style.marginTop = '-' + ((1 + ownerFactor) * cm.defaultTextHeight()) + 'px';
       widget.appendChild(owner);
 
       var dot = document.createElement('pre');
@@ -117,6 +117,15 @@
         owner.style.background = session.color || options.color;
         owner.style.color = session.textColor || options.textColor;
         owner.innerHTML = session.name || sessionId;
+
+        if(to.line === 0) {
+          // Display the owner text below the caret.
+          // This is to prevent owner from being invisible (outside editor)
+          owner.style.marginTop = '0';
+        } else {
+          // Display the owner text above the caret
+          owner.style.marginTop = '-' + ((1 + ownerFactor) * cm.defaultTextHeight()) + 'px';
+        }
 
         // We mark up the range of text the other user has highlighted
         if (marker) {
