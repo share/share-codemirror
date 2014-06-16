@@ -85,7 +85,9 @@
           console.error("cm: " + cmText);
           console.error("ot: " + otText);
           // Replace the editor text with the ctx snapshot.
+          ctx.suppress = true;
           cm.setValue(ctx.get() || '');
+          ctx.suppress = false;
         }
       }, 0);
     }
