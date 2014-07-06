@@ -18,8 +18,7 @@
 
     var cursorsBySessionId = {};
 
-    ctx.onPresence = function () {
-      var presence = ctx.getPresence();
+    ctx.onPresence = function (presence) {
       var sessionIds = Object.keys(presence);
       makeUserStyles(presence);
       sessionIds.forEach(function (sessionId) {
