@@ -1,66 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/codemirror.css">
-<script src="/codemirror.js"></script>
-<script src="/channel/bcsocket.js"></script>
-<script src="/share.uncompressed.js"></script>
-<script src="/share-codemirror.js"></script>
+    <link rel="stylesheet" href="/codemirror.css">
+    <script src="/lodash.min.js"></script>
+    <script src="/codemirror.js"></script>
+    <script src="/channel/bcsocket.js"></script>
+    <script src="/share.uncompressed.js"></script>
+    <script src="/share-codemirror.js"></script>
+    <script src="/share-codemirror-cursor.js"></script>
+    <script src="/tinycolor-min.js"></script>
+
+    <style>
+
+        .user-name {
+            color: white;
+            font-size: 10px;
+            line-height: 1;
+            padding: 1px 3px;
+
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+        }
+
+        .user-cursor {
+            background: black;
+        }
+
+        #users input {
+            width: 250px;
+        }
+    </style>
 </head>
 <body>
 <textarea id="pad">Connecting...</textarea>
-<button id="monkey">Infinite Monkey</button>
+
+<div id="myself">
+    <input value="">
+</div>
+<div id="users"></div>
 <script>
-var elem = document.getElementById('pad');
-var cm = CodeMirror.fromTextArea(elem, {
-  mode: "text/plain"
-});
+    var elem = document.getElementById('pad');
+    var cm = CodeMirror.fromTextArea(elem, {
+        mode: "text/plain"
+    });
 
-var s = new BCSocket(null, {reconnect: true});
-var sjs = new window.sharejs.Connection(s);
-var doc = sjs.get('users', 'sephx');
+    var bcs = new BCSocket(null, {reconnect: true});
+    var sjs = new window.sharejs.Connection(bcs);
+    sjs.debug = false;
 
-doc.subscribe();
-doc.whenReady(function () {
-  if (!doc.type) doc.create('text');
-  if (doc.type && doc.type.name === 'text') {
-    doc.attachCodeMirror(cm);
-  }
-});
+    var doc = sjs.get('users', 'sephx');
 
-document.getElementById('monkey').onclick = function() {
-  setInterval(monkeyType, 50);
-};
+    doc.subscribe();
+    doc.whenReady(function () {
+        if (!doc.type) doc.create('text');
+        if (doc.type && doc.type.name === 'text') {
+            var ctx = doc.createContext();
+            doc.attachCodeMirror(cm, ctx);
+            doc.attachCodeMirrorCursor(cm, ctx, {inactiveTimeout: 2000});
 
-function monkeyType() {
-  var textLength = cm.getValue().length;
-  var pos = Math.floor(Math.random()*textLength);
-  var from = cm.posFromIndex(pos);
-  var editLength = randomInt(10)
-  if(Math.random() < 0.9) {
-    // Add text
-    var text =  randomString(editLength);
-    cm.replaceRange(text, cm.posFromIndex(pos));
-  } else {
-    var endIndex = Math.max(pos + editLength, textLength-1);
-    var to = cm.posFromIndex(endIndex);
-    cm.replaceRange('', from, to);
-  }
-}
+            // set the color for our session
+            var sessionIds = Object.keys(ctx.getPresence());
+            // colorbrewer
+            var colors = [
+                "#8dd3c7", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd", "#ccebc5"
+            ];
+            var color = colors[sessionIds.length % colors.length];
+            doc.setPresenceProperty("color", color);
 
-function randomString(len) {
-	var chars = "0123456789\nABCDEF\nGHIJKLM\nNOPQRSTUVWXTZ\nabcde\nfghiklmnop\nqrstuvwxyz";
-	var result = '';
-	for (var i=0; i<len; i++) {
-		var rnum = randomInt(chars.length);
-		result += chars.substring(rnum, rnum+1);
-	}
-  return result;
-}
+            var selectionColor = tinycolor.lighten(color).toHexString();
+            doc.setPresenceProperty("selectionColor", selectionColor);
 
-function randomInt(max) {
-  return Math.floor(Math.random()*max);
-}
+            var textColor = tinycolor.mostReadable(color, ['black', 'white']).toHexString();
+            doc.setPresenceProperty("textColor", textColor);
+
+            var myself = document.getElementById('myself');
+            myself.style.background = color;
+            var input = myself.getElementsByTagName("input")[0];
+            input.value = doc.connection.id;
+            input.onkeyup = function () {
+                doc.setPresenceProperty("name", input.value);
+            };
+        }
+    });
+
 
 </script>
 </body>
