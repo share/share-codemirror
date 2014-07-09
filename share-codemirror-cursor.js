@@ -71,6 +71,10 @@
     var ownerFactor = 0.8; // Relative size of owner font
 
     function Cursor(cm, sessionId) {
+      // TODO: Make similar to this:
+      // https://github.com/quilljs/quill/blob/develop/src/modules/multi-cursor.coffee
+      // http://quilljs.com/docs/modules/multi-cursors/
+
       // The parent element of the cursor
       var widget = document.createElement('div');
       widget.style.position = 'absolute';
