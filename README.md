@@ -8,7 +8,7 @@ var cm = CodeMirror.fromTextArea(elem);
 shareDoc.attachCodeMirror(cm);
 ```
 
-That's it. You now have 2-way sync between your ShareJS and CodeMirror. 
+That's it. You now have 2-way sync between your ShareJS and CodeMirror.
 
 ## Install with Bower
 
@@ -22,7 +22,7 @@ bower install share-codemirror
 npm install share-codemirror
 ```
 
-On Node.js you can mount the `scriptsDir` (where `share-codemirror.js` lives) as a static resource 
+On Node.js you can mount the `scriptsDir` (where `share-codemirror.js` lives) as a static resource
 in your web server:
 
 ```javascript
@@ -65,6 +65,10 @@ open coverage/lcov-report/index.html
 
 ## Release process
 
+```
+npm outdated --depth 0 # See if you can upgrade something
+```
+
 * Modify version in `bower.json` (not in `package.json`)
 * Update `History.md`
 * Commit
@@ -78,4 +82,3 @@ git push --tags
 ```
 
 There is no `bower publish` - the existance of a git tag is enough.
-

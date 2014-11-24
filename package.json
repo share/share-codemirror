@@ -4,7 +4,6 @@
   "description": "CodeMirror bindings for ShareJS",
   "main": "share-codemirror.js",
   "scripts": {
-    "pretest": "cd node_modules/share && npm install",
     "test": "node_modules/.bin/mocha"
   },
   "repository": {
@@ -21,14 +20,13 @@
     "url": "https://github.com/share/share-codemirror/issues"
   },
   "devDependencies": {
-    "share": "v0.7.0-alpha9",
-    "codemirror": "~4.0.3",
-    "connect": "~2.11.0",
-    "browserchannel": "~1.0.8",
-    "livedb": "~0.2.6",
-    "livedb-mongo": "~0.2.5",
-    "mocha": "~1.14.0",
-    "jsdom": "~0.8.8",
-    "istanbul": "~0.1.44"
+    "browserchannel": "^2.0.0",
+    "codemirror": "^4.8.0",
+    "express": "^4.10.3",
+    "istanbul": "^0.3.2",
+    "jsdom": "0.8.8",
+    "livedb": "^0.4.9",
+    "mocha": "^2.0.1",
+    "share": "^0.7.3"
   }
 }

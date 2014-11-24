@@ -1,25 +1,20 @@
+var http = require('http');
 var Duplex = require('stream').Duplex;
 var browserChannel = require('browserchannel').server;
-var connect = require('connect');
+var express = require('express');
 var livedb = require('livedb');
-var livedbMongo = require('livedb-mongo');
 var sharejs = require('share');
 var shareCodeMirror = require('..');
 
-var webserver = connect(
-  connect["static"](__dirname),
-  connect["static"](shareCodeMirror.scriptsDir),
-  connect["static"](__dirname + '/../node_modules/codemirror/lib'),
-  connect["static"](sharejs.scriptsDir)
-);
-
-var backend = livedb.client(livedbMongo('localhost:27017/test?auto_reconnect', {
-  safe: false
-}));
-
+var backend = livedb.client(livedb.memory());
 var share = sharejs.server.createClient({backend: backend});
 
-webserver.use(browserChannel({webserver: webserver}, function (client) {
+var app = express();
+app.use(express.static(__dirname));
+app.use(express.static(shareCodeMirror.scriptsDir));
+app.use(express.static(__dirname + '/../node_modules/codemirror/lib'));
+app.use(express.static(sharejs.scriptsDir));
+app.use(browserChannel(function (client) {
   var stream = new Duplex({objectMode: true});
   stream._write = function (chunk, encoding, callback) {
     if (client.state !== 'closed') {
@@ -45,5 +40,9 @@ webserver.use(browserChannel({webserver: webserver}, function (client) {
   return share.listen(stream);
 }));
 
-webserver.listen(7007);
-console.log("Listening on http://localhost:7007/");
+var server = http.createServer(app);
+server.listen(7007, function (err) {
+  if (err) throw err;
+
+  console.log('Listening on http://%s:%s', server.address().address, server.address().port);
+});
