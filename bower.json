@@ -1,6 +1,6 @@
 {
   "name": "share-codemirror",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "main": "share-codemirror.js",
   "ignore": [
     "node_modules"
