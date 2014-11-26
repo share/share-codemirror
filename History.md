@@ -1,3 +1,7 @@
+## [0.1.0](https://github.com/share/share-codemirror/compare/v0.0.5...v0.1.0) (26 Nov 2014)
+
+* Augment CodeMirror instance with `detachShareJsDoc()`. In a single app context, CodeMirror instances might be attached several times to the same shared doc. This can lead to multiple share channels attached to multiple ghost instances of CodeMirror for the same file, causing an infinite loop while the editors keep appending content to the file. This new method allows for safely disconnecting a shareJs doc from a CodeMirror instance.
+
 ## [0.0.5](https://github.com/share/share-codemirror/compare/v0.0.4...v0.0.5) (12 Nov 2013)
 
 * Handle empty documents. This is a workaround for a sharejs bug where `ctx.get()` returns `undefined`.

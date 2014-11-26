@@ -36,10 +36,8 @@
     cm.on('change', onLocalChange);
 
     function onLocalChange(cm, change) {
-      if (ctx.suppress) return;
-      ctx.suppress = true;
+      if (suppress) return;
       applyToShareJS(cm, change);
-      ctx.suppress = false;
       check();
     }
 
