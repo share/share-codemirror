@@ -33,11 +33,21 @@
 
     // *** local -> remote changes
 
-    cm.on('change', function (cm, change) {
-      if (suppress) return;
+    cm.on('change', onLocalChange);
+
+    function onLocalChange(cm, change) {
+      if (ctx.suppress) return;
+      ctx.suppress = true;
       applyToShareJS(cm, change);
+      ctx.suppress = false;
       check();
-    });
+    }
+
+    cm.detachShareJsDoc = function () {
+      ctx.onRemove = null;
+      ctx.onInsert = null;
+      cm.off('change', onLocalChange);
+    }
 
     // Convert a CodeMirror change into an op understood by share.js
     function applyToShareJS(cm, change) {
