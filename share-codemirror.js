@@ -39,19 +39,28 @@
       check();
     });
 
-    // Convert a CodeMirror change into an op understood by share.js
-    function applyToShareJS(cm, change) {
-      // CodeMirror changes give a text replacement.
-      // I tuned this operation a little bit, for speed.
-      var startPos = 0;  // Get character position from # of chars in each line.
-      var i = 0;         // i goes through all lines.
+    function indexFromPos(pos) {
+      var doc = ctx.get() || '';
+      doc = doc.split('\n');
+      var last = doc.length - 1;
+      if (pos.line > last) pos = {line:last, ch:doc[last].length};
 
-      while (i < change.from.line) {
-        startPos += cm.lineInfo(i).text.length + 1;   // Add 1 for '\n'
+      var index = pos.ch;
+      if (pos.line < 0 || pos.ch < 0) return 0;
+
+      var i = 0;
+      while (i < pos.line) {
+        index += doc[i].length + 1; 
         i++;
       }
 
-      startPos += change.from.ch;
+      return index;
+    }
+    // Convert a CodeMirror change into an op understood by share.js
+    function applyToShareJS(cm, change) {
+      // CodeMirror changes give a text replacement.
+     
+     var startPos = indexFromPos(change.from);
 
       if (change.to.line == change.from.line && change.to.ch == change.from.ch) {
         // nothing was removed.
@@ -84,7 +93,9 @@
           console.error("cm: " + cmText);
           console.error("ot: " + otText);
           // Replace the editor text with the ctx snapshot.
+          suppress = true;
           cm.setValue(ctx.get() || '');
+          suppress = false;
         }
       }, 0);
     }
